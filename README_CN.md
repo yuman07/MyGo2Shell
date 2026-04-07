@@ -9,8 +9,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-macOS-blue?logo=apple" alt="Platform">
-  <img src="https://img.shields.io/badge/language-Swift-orange?logo=swift" alt="Language">
+  <img src="https://img.shields.io/badge/macOS-26.0%2B_(Tahoe)-blue?logo=apple" alt="macOS 26.0+">
+  <img src="https://img.shields.io/badge/Xcode-26.0%2B-1575F9?logo=xcode" alt="Xcode 26.0+">
+  <img src="https://img.shields.io/badge/Swift-5.0-orange?logo=swift" alt="Swift 5.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
 </p>
@@ -112,11 +113,23 @@ cp -r build/MyGo2Shell.app /Applications/
 
 ## 系统要求
 
-| 项目 | 要求 |
-|------|------|
-| **操作系统** | macOS（Apple Silicon） |
-| **构建工具** | Xcode Command Line Tools 或 Xcode |
-| **权限** | AppleScript 自动化权限（首次使用时系统会提示授权） |
+### 运行环境
+
+| 项目 | 要求 | 说明 |
+|------|------|------|
+| **macOS** | 26.0 (Tahoe) 或更高版本 | 应用的 Deployment Target 设定为 macOS 26.0 |
+| **芯片架构** | Apple Silicon (arm64) | 不支持 Intel Mac |
+| **权限** | 自动化（AppleScript）权限 | 首次启动时系统会弹窗提示授权 |
+
+### 编译环境
+
+| 项目 | 要求 | 说明 |
+|------|------|------|
+| **Xcode** | 26.0 或更高版本 | 需要 macOS 26.0 SDK |
+| **Swift** | 5.0 或更高版本 | 已包含在 Xcode 中 |
+| **Xcode Command Line Tools** | `build.sh` 构建时必需 | 通过 `xcode-select --install` 安装 |
+
+> **提示：** 如需支持更低版本的 macOS 或 Intel Mac，可修改 `MyGo2Shell.xcodeproj` 中的 Deployment Target，或编辑 `build.sh` 中的 `-target` 参数。
 
 ## 隐私与权限
 
