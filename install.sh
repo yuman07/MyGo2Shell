@@ -38,7 +38,7 @@ if [ -d "$INSTALL_DIR/$APP_NAME.app" ]; then
 fi
 
 echo "Installing to $INSTALL_DIR..."
-unzip -o "$TMP_FILE" -d "$INSTALL_DIR"
+unzip -oq "$TMP_FILE" -d "$INSTALL_DIR"
 
 echo "Removing quarantine flag..."
 xattr -cr "$INSTALL_DIR/$APP_NAME.app"

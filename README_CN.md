@@ -52,7 +52,7 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 - **一键启动** — 点击工具栏图标，即刻在当前 Finder 目录下打开终端
 - **多终端支持** — 通过一条 `defaults write` 命令即可切换到 iTerm2、Warp 等终端
 - **零配置** — 开箱即用，默认打开 Terminal.app，无需任何设置
-- **极致轻量** — 单文件 Swift 应用（约 40 行代码），启动即退出
+- **极致轻量** — 单文件 Swift 应用（约 100 行代码），启动即退出
 - **原生体验** — 使用 AppleScript 与 Finder 和 Terminal 无缝通信
 - **工具栏集成** — 常驻 Finder 工具栏，随时可用
 
@@ -157,14 +157,16 @@ cp -r build/MyGo2Shell.app /Applications/
 ```
 MyGo2Shell/
 ├── MyGo2Shell/
-│   ├── main.swift                # 应用入口和核心逻辑
-│   ├── Info.plist                # 应用元数据
-│   ├── MyGo2Shell.entitlements   # AppleScript 权限配置
-│   └── Assets.xcassets/          # 应用图标资源
-├── MyGo2Shell.xcodeproj/         # Xcode 工程文件
-├── build.sh                      # 命令行构建脚本
-├── README.md                     # 英文文档
-└── README_CN.md                  # 中文文档
+│   ├── main.swift              # 应用入口和核心逻辑
+│   ├── Info.plist              # 应用元数据
+│   ├── MyGo2Shell.entitlements # AppleScript 权限配置
+│   └── Assets.xcassets/        # 应用图标资源
+├── assets/                     # 项目资源（应用图标源文件）
+├── MyGo2Shell.xcodeproj/       # Xcode 工程文件
+├── build.sh                    # 命令行构建脚本
+├── install.sh                  # 一键安装脚本
+├── README.md                   # 英文文档
+└── README_CN.md                # 中文文档
 ```
 
 ## 常见问题

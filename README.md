@@ -52,7 +52,7 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 - **One-click launch** — Click the toolbar icon to instantly open Terminal at the current Finder directory
 - **Multiple terminal support** — Works with Terminal.app, iTerm2, Warp, and more via a single `defaults write` command
 - **Zero configuration** — Works out of the box with Terminal.app, no setup required
-- **Minimal footprint** — Single-file Swift app (~40 lines of code), launches and exits immediately
+- **Minimal footprint** — Single-file Swift app (~100 lines of code), launches and exits immediately
 - **Native macOS experience** — Uses AppleScript to communicate with Finder and Terminal seamlessly
 - **Finder toolbar integration** — Lives right in your Finder toolbar for quick access
 
@@ -159,11 +159,14 @@ MyGo2Shell/
 ├── MyGo2Shell/
 │   ├── main.swift              # App entry point & core logic
 │   ├── Info.plist              # App metadata
-│   ├── MyGo2Shell.entitlements   # AppleScript permissions
+│   ├── MyGo2Shell.entitlements # AppleScript permissions
 │   └── Assets.xcassets/        # App icon assets
-├── MyGo2Shell.xcodeproj/         # Xcode project file
+├── assets/                     # Project assets (app icon source)
+├── MyGo2Shell.xcodeproj/       # Xcode project file
 ├── build.sh                    # Command-line build script
-└── README.md
+├── install.sh                  # One-line installation script
+├── README.md                   # English documentation
+└── README_CN.md                # Chinese documentation
 ```
 
 ## FAQ

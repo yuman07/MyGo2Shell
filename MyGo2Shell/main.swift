@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return fm.fileExists(atPath: "/Applications/\(name).app")
             || fm.fileExists(atPath: "/System/Applications/\(name).app")
             || fm.fileExists(atPath: "/System/Applications/Utilities/\(name).app")
+            || fm.fileExists(atPath: "\(NSHomeDirectory())/Applications/\(name).app")
     }
 
     private func sanitizedTerminalName(_ raw: String) -> String {

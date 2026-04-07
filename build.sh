@@ -26,7 +26,8 @@ actool MyGo2Shell/Assets.xcassets \
     --platform macosx \
     --minimum-deployment-target ${DEPLOYMENT_TARGET} \
     --app-icon AppIcon \
-    --output-partial-info-plist "$BUILD_DIR/partial-info.plist"
+    --output-partial-info-plist "$BUILD_DIR/partial-info.plist" \
+    > /dev/null
 
 # Copy Info.plist (replace build variables with actual values)
 sed \
