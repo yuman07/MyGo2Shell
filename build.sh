@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
 
+command -v swiftc >/dev/null 2>&1 || { echo "Error: swiftc not found. Run: xcode-select --install"; exit 1; }
+command -v actool >/dev/null 2>&1 || { echo "Error: actool not found. Run: xcode-select --install"; exit 1; }
+
 APP_NAME="MyGo2Shell"
 BUILD_DIR="build"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
+DEPLOYMENT_TARGET="12.0"
 
 rm -rf "$BUILD_DIR"
 
@@ -14,13 +18,13 @@ mkdir -p "$APP_BUNDLE/Contents/Resources"
 swiftc MyGo2Shell/main.swift \
     -o "$APP_BUNDLE/Contents/MacOS/$APP_NAME" \
     -framework Cocoa \
-    -target arm64-apple-macos26.0
+    -target arm64-apple-macos${DEPLOYMENT_TARGET}
 
 # Compile asset catalog (generates AppIcon.icns)
 actool MyGo2Shell/Assets.xcassets \
     --compile "$APP_BUNDLE/Contents/Resources" \
     --platform macosx \
-    --minimum-deployment-target 26.0 \
+    --minimum-deployment-target ${DEPLOYMENT_TARGET} \
     --app-icon AppIcon \
     --output-partial-info-plist "$BUILD_DIR/partial-info.plist"
 
@@ -30,7 +34,7 @@ sed \
     -e 's/$(EXECUTABLE_NAME)/MyGo2Shell/' \
     -e "s/\$(PRODUCT_BUNDLE_IDENTIFIER)/com.go2shell.MyGo2Shell/" \
     -e 's/$(PRODUCT_NAME)/MyGo2Shell/' \
-    -e 's/$(MACOSX_DEPLOYMENT_TARGET)/26.0/' \
+    -e "s/\$(MACOSX_DEPLOYMENT_TARGET)/${DEPLOYMENT_TARGET}/" \
     MyGo2Shell/Info.plist > "$APP_BUNDLE/Contents/Info.plist"
 
 # Create PkgInfo

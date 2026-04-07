@@ -2,9 +2,24 @@
 set -e
 
 APP_NAME="MyGo2Shell"
-DOWNLOAD_URL="https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.zip"
 TMP_FILE="/tmp/$APP_NAME.zip"
 INSTALL_DIR="/Applications"
+
+trap 'rm -f "$TMP_FILE"' EXIT
+
+VERSION="${1:-latest}"
+if [ "$VERSION" = "latest" ]; then
+    echo "Fetching latest release..."
+    DOWNLOAD_URL=$(curl -fsSL "https://api.github.com/repos/yuman07/MyGo2Shell/releases/latest" \
+        | grep "browser_download_url.*\.zip" | head -1 | cut -d'"' -f4)
+    if [ -z "$DOWNLOAD_URL" ]; then
+        echo "❌ Failed to fetch latest release URL."
+        echo "   Please check your network connection and try again."
+        exit 1
+    fi
+else
+    DOWNLOAD_URL="https://github.com/yuman07/MyGo2Shell/releases/download/$VERSION/MyGo2Shell.zip"
+fi
 
 rm -f "$TMP_FILE"
 
@@ -14,15 +29,17 @@ curl -fL "$DOWNLOAD_URL" -o "$TMP_FILE"
 if [ ! -s "$TMP_FILE" ]; then
     echo "❌ Download failed: file is empty."
     echo "   Please check your network connection and try again."
-    rm -f "$TMP_FILE"
     exit 1
 fi
 
 if ! unzip -tq "$TMP_FILE" > /dev/null 2>&1; then
     echo "❌ Download failed: file is not a valid zip archive."
     echo "   This is usually caused by a network issue. Please try again."
-    rm -f "$TMP_FILE"
     exit 1
+fi
+
+if [ -d "$INSTALL_DIR/$APP_NAME.app" ]; then
+    echo "Existing installation found. Overwriting..."
 fi
 
 echo "Installing to $INSTALL_DIR..."
@@ -30,8 +47,6 @@ unzip -o "$TMP_FILE" -d "$INSTALL_DIR"
 
 echo "Removing quarantine flag..."
 xattr -cr "$INSTALL_DIR/$APP_NAME.app"
-
-rm -f "$TMP_FILE"
 
 echo ""
 echo "✅ $APP_NAME installed successfully!"

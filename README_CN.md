@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-26.0%2B_(Tahoe)-blue?logo=apple" alt="macOS 26.0+">
+  <img src="https://img.shields.io/badge/macOS-12.0%2B_(Monterey)-blue?logo=apple" alt="macOS 12.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -85,7 +85,13 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
-自动完成下载、安装和配置，即装即用。
+自动下载最新版本，完成安装和配置，即装即用。
+
+如需安装指定版本：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash -s -- v1.0.0
+```
 
 ### 方式二：从源码构建
 
@@ -131,7 +137,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
-| **macOS** | 26.0 (Tahoe) 或更高版本 | 应用的 Deployment Target 设定为 macOS 26.0 |
+| **macOS** | 12.0 (Monterey) 或更高版本 | 应用的 Deployment Target 设定为 macOS 12.0 |
 | **芯片架构** | Apple Silicon (arm64) | 不支持 Intel Mac |
 | **权限** | 自动化（AppleScript）权限 | 首次启动时系统会弹窗提示授权 |
 
@@ -139,11 +145,9 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
-| **Xcode** | 26.0 或更高版本 | 需要 macOS 26.0 SDK |
+| **Xcode** | 26.3 或更高版本 | 需要 macOS 12.0 SDK 和 Swift 6.0 |
 | **Swift** | 6.0 或更高版本 | 已包含在 Xcode 中 |
 | **Xcode Command Line Tools** | `build.sh` 构建时必需 | 通过 `xcode-select --install` 安装 |
-
-> **提示：** 如需支持更低版本的 macOS 或 Intel Mac，可修改 `MyGo2Shell.xcodeproj` 中的 Deployment Target，或编辑 `build.sh` 中的 `-target` 参数。
 
 ## 隐私与权限
 
@@ -193,7 +197,7 @@ MyGo2Shell/
 > # 恢复默认的 Terminal.app
 > defaults delete com.go2shell.MyGo2Shell terminal
 > ```
-> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2 有内置的专属适配，其他终端使用标准的 AppleScript `do script` 接口。
+> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2 和 Warp 有内置的原生适配，其他终端使用标准的 AppleScript `do script` 接口。
 
 **Q：应用打开了终端，但没有跳转到正确的目录？**
 > 请确认你已在 **系统设置 > 隐私与安全性 > 自动化** 中授予了相关权限。可能需要先移除再重新添加权限。

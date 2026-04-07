@@ -4,18 +4,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         openShellInFinderDirectory()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.async {
             NSApp.terminate(nil)
         }
     }
 
+    private func applicationExists(_ name: String) -> Bool {
+        let fm = FileManager.default
+        return fm.fileExists(atPath: "/Applications/\(name).app")
+            || fm.fileExists(atPath: "/System/Applications/\(name).app")
+            || fm.fileExists(atPath: "/System/Applications/Utilities/\(name).app")
+    }
+
+    private func sanitizedTerminalName(_ raw: String) -> String {
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: " -"))
+        let sanitized = String(raw.unicodeScalars.filter { allowed.contains($0) })
+        return sanitized.isEmpty ? "Terminal" : sanitized
+    }
+
     private func openShellInFinderDirectory() {
-        let terminal = UserDefaults.standard.string(forKey: "terminal") ?? "Terminal"
+        let rawTerminal = UserDefaults.standard.string(forKey: "terminal") ?? "Terminal"
+        let terminal = sanitizedTerminalName(rawTerminal)
 
         let getPathScript = """
         tell application "Finder"
             if (count of Finder windows) > 0 then
-                set currentPath to POSIX path of (target of front Finder window as alias)
+                try
+                    set currentPath to POSIX path of (target of front Finder window as alias)
+                on error
+                    set currentPath to POSIX path of (desktop as alias)
+                end try
             else
                 set currentPath to POSIX path of (desktop as alias)
             end if
@@ -24,18 +42,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         """
 
         var error: NSDictionary?
-        guard let pathScript = NSAppleScript(source: getPathScript),
-              case let result = pathScript.executeAndReturnError(&error) as NSAppleEventDescriptor,
-              let path = result.stringValue else {
-            if let error = error {
-                NSLog("MyGo2Shell error getting path: \(error)")
-            }
+        let result = NSAppleScript(source: getPathScript)?.executeAndReturnError(&error)
+        guard let path = result?.stringValue, !path.isEmpty else {
+            if let error { NSLog("MyGo2Shell error getting path: \(error)") }
+            return
+        }
+
+        if !applicationExists(terminal) {
+            NSLog("MyGo2Shell: terminal '\(terminal)' not found, falling back to Terminal")
+            openInGenericTerminal(name: "Terminal", path: path)
             return
         }
 
         let lowercased = terminal.lowercased()
         if lowercased == "iterm" || lowercased == "iterm2" {
             openInITerm(path: path)
+        } else if lowercased == "warp" {
+            openInWarp(path: path)
         } else {
             openInGenericTerminal(name: terminal, path: path)
         }
@@ -56,6 +79,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 write text "cd " & quoted form of "\(path)" & " && clear"
             end tell
         end tell
+        """
+        runAppleScript(source)
+    }
+
+    private func openInWarp(path: String) {
+        let source = """
+        do shell script "open -a Warp " & quoted form of "\(path)"
         """
         runAppleScript(source)
     }

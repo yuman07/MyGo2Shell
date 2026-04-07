@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-26.0%2B_(Tahoe)-blue?logo=apple" alt="macOS 26.0+">
+  <img src="https://img.shields.io/badge/macOS-12.0%2B_(Monterey)-blue?logo=apple" alt="macOS 12.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -85,7 +85,13 @@ Open Terminal and paste the following command:
 curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
-This will automatically download, install, and configure the app — ready to use.
+This will automatically download the latest release, install, and configure the app — ready to use.
+
+To install a specific version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash -s -- v1.0.0
+```
 
 ### Option 2: Build from Source
 
@@ -131,7 +137,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
-| **macOS** | 26.0 (Tahoe) or later | Deployment target is set to macOS 26.0 |
+| **macOS** | 12.0 (Monterey) or later | Deployment target is set to macOS 12.0 |
 | **Architecture** | Apple Silicon (arm64) | Intel Macs are not supported |
 | **Permissions** | Automation (AppleScript) | System will prompt on first launch |
 
@@ -139,11 +145,9 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
-| **Xcode** | 26.0 or later | Required for macOS 26.0 SDK |
+| **Xcode** | 26.3 or later | Required for macOS 12.0 SDK and Swift 6.0 |
 | **Swift** | 6.0 or later | Included with Xcode |
 | **Xcode Command Line Tools** | Required for `build.sh` | Install via `xcode-select --install` |
-
-> **Note:** If you want to support older macOS versions or Intel Macs, you can modify the deployment target in `MyGo2Shell.xcodeproj` or edit the `-target` flag in `build.sh`.
 
 ## Privacy & Permissions
 
@@ -192,7 +196,7 @@ MyGo2Shell/
 > # Reset to default Terminal.app
 > defaults delete com.go2shell.MyGo2Shell terminal
 > ```
-> The terminal name should match the application name in `/Applications/`. iTerm2 has built-in special handling; other terminals use the standard AppleScript `do script` interface.
+> The terminal name should match the application name in `/Applications/`. iTerm2 and Warp have built-in native handling; other terminals use the standard AppleScript `do script` interface.
 
 **Q: The app opens Terminal but doesn't navigate to the right folder?**
 > Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.
