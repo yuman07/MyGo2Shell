@@ -25,7 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         var error: NSDictionary?
         guard let pathScript = NSAppleScript(source: getPathScript),
-              let result = pathScript.executeAndReturnError(&error) as? NSAppleEventDescriptor,
+              case let result = pathScript.executeAndReturnError(&error) as NSAppleEventDescriptor,
               let path = result.stringValue else {
             if let error = error {
                 NSLog("MyGo2Shell error getting path: \(error)")
