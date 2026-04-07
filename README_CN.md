@@ -87,12 +87,6 @@ curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh 
 
 自动下载最新版本，完成安装和配置，即装即用。
 
-如需安装指定版本：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash -s -- v1.0.0
-```
-
 ### 方式二：从源码构建
 
 ```bash

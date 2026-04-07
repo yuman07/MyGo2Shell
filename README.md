@@ -87,12 +87,6 @@ curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh 
 
 This will automatically download the latest release, install, and configure the app — ready to use.
 
-To install a specific version:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash -s -- v1.0.0
-```
-
 ### Option 2: Build from Source
 
 ```bash

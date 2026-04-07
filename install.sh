@@ -7,18 +7,13 @@ INSTALL_DIR="/Applications"
 
 trap 'rm -f "$TMP_FILE"' EXIT
 
-VERSION="${1:-latest}"
-if [ "$VERSION" = "latest" ]; then
-    echo "Fetching latest release..."
-    DOWNLOAD_URL=$(curl -fsSL "https://api.github.com/repos/yuman07/MyGo2Shell/releases/latest" \
-        | grep "browser_download_url.*\.zip" | head -1 | cut -d'"' -f4)
-    if [ -z "$DOWNLOAD_URL" ]; then
-        echo "❌ Failed to fetch latest release URL."
-        echo "   Please check your network connection and try again."
-        exit 1
-    fi
-else
-    DOWNLOAD_URL="https://github.com/yuman07/MyGo2Shell/releases/download/$VERSION/MyGo2Shell.zip"
+echo "Fetching latest release..."
+DOWNLOAD_URL=$(curl -fsSL "https://api.github.com/repos/yuman07/MyGo2Shell/releases/latest" \
+    | grep "browser_download_url.*\.zip" | head -1 | cut -d'"' -f4)
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo "❌ Failed to fetch latest release URL."
+    echo "   Please check your network connection and try again."
+    exit 1
 fi
 
 rm -f "$TMP_FILE"
