@@ -10,7 +10,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func openShellInFinderDirectory() {
-        let source = """
+        let terminal = UserDefaults.standard.string(forKey: "terminal") ?? "Terminal"
+
+        let getPathScript = """
         tell application "Finder"
             if (count of Finder windows) > 0 then
                 set currentPath to POSIX path of (target of front Finder window as alias)
@@ -18,17 +20,60 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 set currentPath to POSIX path of (desktop as alias)
             end if
         end tell
-
-        tell application "Terminal"
-            activate
-            do script "cd " & quoted form of currentPath & " && clear"
-        end tell
+        return currentPath
         """
 
         var error: NSDictionary?
+        guard let pathScript = NSAppleScript(source: getPathScript),
+              let result = pathScript.executeAndReturnError(&error) as? NSAppleEventDescriptor,
+              let path = result.stringValue else {
+            if let error = error {
+                NSLog("MyGo2Shell error getting path: \(error)")
+            }
+            return
+        }
+
+        let lowercased = terminal.lowercased()
+        if lowercased == "iterm" || lowercased == "iterm2" {
+            openInITerm(path: path)
+        } else {
+            openInGenericTerminal(name: terminal, path: path)
+        }
+    }
+
+    private func openInITerm(path: String) {
+        let source = """
+        tell application "iTerm"
+            activate
+            if (count of windows) > 0 then
+                tell current window
+                    create tab with default profile
+                end tell
+            else
+                create window with default profile
+            end if
+            tell current session of current window
+                write text "cd " & quoted form of "\(path)" & " && clear"
+            end tell
+        end tell
+        """
+        runAppleScript(source)
+    }
+
+    private func openInGenericTerminal(name: String, path: String) {
+        let source = """
+        tell application "\(name)"
+            activate
+            do script "cd " & quoted form of "\(path)" & " && clear"
+        end tell
+        """
+        runAppleScript(source)
+    }
+
+    private func runAppleScript(_ source: String) {
+        var error: NSDictionary?
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(&error)
-
         if let error = error {
             NSLog("MyGo2Shell error: \(error)")
         }

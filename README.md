@@ -47,7 +47,8 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 ## Features
 
 - **One-click launch** — Click the toolbar icon to instantly open Terminal at the current Finder directory
-- **Zero configuration** — No preferences, no menu bar icon, no background process
+- **Multiple terminal support** — Works with Terminal.app, iTerm2, Warp, and more via a single `defaults write` command
+- **Zero configuration** — Works out of the box with Terminal.app, no setup required
 - **Minimal footprint** — Single-file Swift app (~40 lines of code), launches and exits immediately
 - **Native macOS experience** — Uses AppleScript to communicate with Finder and Terminal seamlessly
 - **Finder toolbar integration** — Lives right in your Finder toolbar for quick access
@@ -177,7 +178,18 @@ MyGo2Shell/
 > Right-click the app and select **Open**, then click **Open** in the dialog to bypass this warning.
 
 **Q: Can I use iTerm2 / Warp / other terminals instead of Terminal.app?**
-> The current version only supports the built-in Terminal.app. You can modify the AppleScript in `main.swift` to target your preferred terminal.
+> Yes! Use `defaults write` to set your preferred terminal:
+> ```bash
+> # Use iTerm2
+> defaults write com.heruijun.MyGo2Shell terminal -string "iTerm"
+>
+> # Use Warp
+> defaults write com.heruijun.MyGo2Shell terminal -string "Warp"
+>
+> # Reset to default Terminal.app
+> defaults delete com.heruijun.MyGo2Shell terminal
+> ```
+> The terminal name should match the application name in `/Applications/`. iTerm2 has built-in special handling; other terminals use the standard AppleScript `do script` interface.
 
 **Q: The app opens Terminal but doesn't navigate to the right folder?**
 > Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.

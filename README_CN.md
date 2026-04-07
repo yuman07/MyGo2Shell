@@ -47,7 +47,8 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 ## 功能特性
 
 - **一键启动** — 点击工具栏图标，即刻在当前 Finder 目录下打开终端
-- **零配置** — 无偏好设置、无菜单栏图标、无后台进程
+- **多终端支持** — 通过一条 `defaults write` 命令即可切换到 iTerm2、Warp 等终端
+- **零配置** — 开箱即用，默认打开 Terminal.app，无需任何设置
 - **极致轻量** — 单文件 Swift 应用（约 40 行代码），启动即退出
 - **原生体验** — 使用 AppleScript 与 Finder 和 Terminal 无缝通信
 - **工具栏集成** — 常驻 Finder 工具栏，随时可用
@@ -178,7 +179,18 @@ MyGo2Shell/
 > 右键点击应用，选择 **打开**，然后在弹出的对话框中再次点击 **打开** 即可。
 
 **Q：能否使用 iTerm2 / Warp 等第三方终端代替 Terminal.app？**
-> 当前版本仅支持系统自带的 Terminal.app。你可以修改 `main.swift` 中的 AppleScript 脚本来适配你偏好的终端。
+> 支持！通过 `defaults write` 命令即可切换终端：
+> ```bash
+> # 使用 iTerm2
+> defaults write com.heruijun.MyGo2Shell terminal -string "iTerm"
+>
+> # 使用 Warp
+> defaults write com.heruijun.MyGo2Shell terminal -string "Warp"
+>
+> # 恢复默认的 Terminal.app
+> defaults delete com.heruijun.MyGo2Shell terminal
+> ```
+> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2 有内置的专属适配，其他终端使用标准的 AppleScript `do script` 接口。
 
 **Q：应用打开了终端，但没有跳转到正确的目录？**
 > 请确认你已在 **系统设置 > 隐私与安全性 > 自动化** 中授予了相关权限。可能需要先移除再重新添加权限。
