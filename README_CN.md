@@ -78,7 +78,7 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 打开终端，粘贴以下命令：
 
 ```bash
-curl -L https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.app.zip -o /tmp/MyGo2Shell.zip && unzip -o /tmp/MyGo2Shell.zip -d /Applications/ && xattr -cr /Applications/MyGo2Shell.app && rm /tmp/MyGo2Shell.zip && echo "✅ MyGo2Shell 安装成功！"
+curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
 自动完成下载、安装和配置，即装即用。

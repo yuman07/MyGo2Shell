@@ -78,7 +78,7 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 Open Terminal and paste the following command:
 
 ```bash
-curl -L https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.app.zip -o /tmp/MyGo2Shell.zip && unzip -o /tmp/MyGo2Shell.zip -d /Applications/ && xattr -cr /Applications/MyGo2Shell.app && rm /tmp/MyGo2Shell.zip && echo "✅ MyGo2Shell installed successfully!"
+curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
 This will automatically download, install, and configure the app — ready to use.
