@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/macOS-26.0%2B_(Tahoe)-blue?logo=apple" alt="macOS 26.0+">
   <img src="https://img.shields.io/badge/Xcode-26.0%2B-1575F9?logo=xcode" alt="Xcode 26.0+">
-  <img src="https://img.shields.io/badge/Swift-5.0-orange?logo=swift" alt="Swift 5.0">
+  <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 5.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
 </p>
@@ -126,7 +126,7 @@ cp -r build/MyGo2Shell.app /Applications/
 | Item | Requirement | Notes |
 |------|-------------|-------|
 | **Xcode** | 26.0 or later | Required for macOS 26.0 SDK |
-| **Swift** | 5.0 or later | Included with Xcode |
+| **Swift** | 6.0 or later | Included with Xcode |
 | **Xcode Command Line Tools** | Required for `build.sh` | Install via `xcode-select --install` |
 
 > **Note:** If you want to support older macOS versions or Intel Macs, you can modify the deployment target in `MyGo2Shell.xcodeproj` or edit the `-target` flag in `build.sh`.
