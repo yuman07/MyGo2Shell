@@ -30,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         script?.executeAndReturnError(&error)
 
         if let error = error {
-            NSLog("Go2Shell error: \(error)")
+            NSLog("MyGo2Shell error: \(error)")
         }
     }
 }

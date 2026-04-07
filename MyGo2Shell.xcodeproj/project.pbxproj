@@ -14,9 +14,9 @@
 /* Begin PBXFileReference section */
 		849302B32DABCE100045A1F0 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		849302B42DABCE100045A1F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		849302B52DABCE100045A1F0 /* Go2Shell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go2Shell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		849302B52DABCE100045A1F0 /* MyGo2Shell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGo2Shell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849302B62DABCE100045A1F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		849302B72DABCE100045A1F0 /* Go2Shell.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Go2Shell.entitlements; sourceTree = "<group>"; };
+		849302B72DABCE100045A1F0 /* MyGo2Shell.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyGo2Shell.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,26 +31,26 @@
 		849302B02DABCE100045A1F0 = {
 			isa = PBXGroup;
 			children = (
-				849302B12DABCE100045A1F0 /* Go2Shell */,
+				849302B12DABCE100045A1F0 /* MyGo2Shell */,
 				849302B22DABCE100045A1F0 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		849302B12DABCE100045A1F0 /* Go2Shell */ = {
+		849302B12DABCE100045A1F0 /* MyGo2Shell */ = {
 			isa = PBXGroup;
 			children = (
 				849302B32DABCE100045A1F0 /* main.swift */,
 				849302B42DABCE100045A1F0 /* Info.plist */,
 				849302B62DABCE100045A1F0 /* Assets.xcassets */,
-				849302B72DABCE100045A1F0 /* Go2Shell.entitlements */,
+				849302B72DABCE100045A1F0 /* MyGo2Shell.entitlements */,
 			);
-			path = Go2Shell;
+			path = MyGo2Shell;
 			sourceTree = "<group>";
 		};
 		849302B22DABCE100045A1F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				849302B52DABCE100045A1F0 /* Go2Shell.app */,
+				849302B52DABCE100045A1F0 /* MyGo2Shell.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -58,9 +58,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		849302BA2DABCE100045A1F0 /* Go2Shell */ = {
+		849302BA2DABCE100045A1F0 /* MyGo2Shell */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 849302BF2DABCE100045A1F0 /* Build configuration list for PBXNativeTarget "Go2Shell" */;
+			buildConfigurationList = 849302BF2DABCE100045A1F0 /* Build configuration list for PBXNativeTarget "MyGo2Shell" */;
 			buildPhases = (
 				849302BB2DABCE100045A1F0 /* Sources */,
 				849302BC2DABCE100045A1F0 /* Frameworks */,
@@ -68,9 +68,9 @@
 			);
 			buildRules = (
 			);
-			name = Go2Shell;
-			productName = Go2Shell;
-			productReference = 849302B52DABCE100045A1F0 /* Go2Shell.app */;
+			name = MyGo2Shell;
+			productName = MyGo2Shell;
+			productReference = 849302B52DABCE100045A1F0 /* MyGo2Shell.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -83,7 +83,7 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 2640;
 			};
-			buildConfigurationList = 849302BE2DABCE100045A1F0 /* Build configuration list for PBXProject "Go2Shell" */;
+			buildConfigurationList = 849302BE2DABCE100045A1F0 /* Build configuration list for PBXProject "MyGo2Shell" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -96,7 +96,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				849302BA2DABCE100045A1F0 /* Go2Shell */,
+				849302BA2DABCE100045A1F0 /* MyGo2Shell */,
 			);
 		};
 /* End PBXProject section */
@@ -120,7 +120,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		849302C02DABCE100045A1F0 /* Debug configuration for PBXProject "Go2Shell" */ = {
+		849302C02DABCE100045A1F0 /* Debug configuration for PBXProject "MyGo2Shell" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -183,7 +183,7 @@
 			};
 			name = Debug;
 		};
-		849302C12DABCE100045A1F0 /* Release configuration for PBXProject "Go2Shell" */ = {
+		849302C12DABCE100045A1F0 /* Release configuration for PBXProject "MyGo2Shell" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -238,42 +238,42 @@
 			};
 			name = Release;
 		};
-		849302C22DABCE100045A1F0 /* Debug configuration for PBXNativeTarget "Go2Shell" */ = {
+		849302C22DABCE100045A1F0 /* Debug configuration for PBXNativeTarget "MyGo2Shell" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Go2Shell/Go2Shell.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MyGo2Shell/MyGo2Shell.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = Go2Shell/Info.plist;
+				INFOPLIST_FILE = MyGo2Shell/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.go2shell.Go2Shell;
+				PRODUCT_BUNDLE_IDENTIFIER = com.go2shell.MyGo2Shell;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		849302C32DABCE100045A1F0 /* Release configuration for PBXNativeTarget "Go2Shell" */ = {
+		849302C32DABCE100045A1F0 /* Release configuration for PBXNativeTarget "MyGo2Shell" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Go2Shell/Go2Shell.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MyGo2Shell/MyGo2Shell.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = Go2Shell/Info.plist;
+				INFOPLIST_FILE = MyGo2Shell/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.go2shell.Go2Shell;
+				PRODUCT_BUNDLE_IDENTIFIER = com.go2shell.MyGo2Shell;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -283,19 +283,19 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		849302BE2DABCE100045A1F0 /* Build configuration list for PBXProject "Go2Shell" */ = {
+		849302BE2DABCE100045A1F0 /* Build configuration list for PBXProject "MyGo2Shell" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				849302C02DABCE100045A1F0 /* Debug configuration for PBXProject "Go2Shell" */,
-				849302C12DABCE100045A1F0 /* Release configuration for PBXProject "Go2Shell" */,
+				849302C02DABCE100045A1F0 /* Debug configuration for PBXProject "MyGo2Shell" */,
+				849302C12DABCE100045A1F0 /* Release configuration for PBXProject "MyGo2Shell" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		849302BF2DABCE100045A1F0 /* Build configuration list for PBXNativeTarget "Go2Shell" */ = {
+		849302BF2DABCE100045A1F0 /* Build configuration list for PBXNativeTarget "MyGo2Shell" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				849302C22DABCE100045A1F0 /* Debug configuration for PBXNativeTarget "Go2Shell" */,
-				849302C32DABCE100045A1F0 /* Release configuration for PBXNativeTarget "Go2Shell" */,
+				849302C22DABCE100045A1F0 /* Debug configuration for PBXNativeTarget "MyGo2Shell" */,
+				849302C32DABCE100045A1F0 /* Release configuration for PBXNativeTarget "MyGo2Shell" */,
 			);
 			defaultConfigurationName = Release;
 		};

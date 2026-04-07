@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-APP_NAME="Go2Shell"
+APP_NAME="MyGo2Shell"
 BUILD_DIR="build"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 
@@ -11,13 +11,13 @@ mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
 
 # Compile binary (arm64)
-swiftc Go2Shell/main.swift \
+swiftc MyGo2Shell/main.swift \
     -o "$APP_BUNDLE/Contents/MacOS/$APP_NAME" \
     -framework Cocoa \
     -target arm64-apple-macos26.0
 
 # Compile asset catalog (generates AppIcon.icns)
-actool Go2Shell/Assets.xcassets \
+actool MyGo2Shell/Assets.xcassets \
     --compile "$APP_BUNDLE/Contents/Resources" \
     --platform macosx \
     --minimum-deployment-target 26.0 \
@@ -27,11 +27,11 @@ actool Go2Shell/Assets.xcassets \
 # Copy Info.plist (replace build variables with actual values)
 sed \
     -e 's/$(DEVELOPMENT_LANGUAGE)/en/' \
-    -e 's/$(EXECUTABLE_NAME)/Go2Shell/' \
-    -e "s/\$(PRODUCT_BUNDLE_IDENTIFIER)/com.go2shell.Go2Shell/" \
-    -e 's/$(PRODUCT_NAME)/Go2Shell/' \
+    -e 's/$(EXECUTABLE_NAME)/MyGo2Shell/' \
+    -e "s/\$(PRODUCT_BUNDLE_IDENTIFIER)/com.go2shell.MyGo2Shell/" \
+    -e 's/$(PRODUCT_NAME)/MyGo2Shell/' \
     -e 's/$(MACOSX_DEPLOYMENT_TARGET)/26.0/' \
-    Go2Shell/Info.plist > "$APP_BUNDLE/Contents/Info.plist"
+    MyGo2Shell/Info.plist > "$APP_BUNDLE/Contents/Info.plist"
 
 # Create PkgInfo
 echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
@@ -41,5 +41,5 @@ echo ""
 echo "Usage:"
 echo "  1. Copy $APP_BUNDLE to /Applications"
 echo "  2. Open a Finder window"
-echo "  3. Hold Command and drag Go2Shell.app from /Applications into the Finder toolbar"
+echo "  3. Hold Command and drag MyGo2Shell.app from /Applications into the Finder toolbar"
 echo "  4. Click the icon to open Terminal at the current folder"

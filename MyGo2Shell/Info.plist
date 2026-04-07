@@ -27,6 +27,6 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Go2Shell needs access to Finder to get the current folder and to Terminal to open a shell.</string>
+	<string>MyGo2Shell needs access to Finder to get the current folder and to Terminal to open a shell.</string>
 </dict>
 </plist>
