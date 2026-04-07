@@ -105,7 +105,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var error: NSDictionary?
         let script = NSAppleScript(source: source)
         script?.executeAndReturnError(&error)
-        if let error = error {
+        if let error {
             NSLog("MyGo2Shell error: \(error)")
         }
     }

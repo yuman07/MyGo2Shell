@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+cd "$(dirname "$0")"
 
 command -v swiftc >/dev/null 2>&1 || { echo "Error: swiftc not found. Run: xcode-select --install"; exit 1; }
 command -v actool >/dev/null 2>&1 || { echo "Error: actool not found. Run: xcode-select --install"; exit 1; }

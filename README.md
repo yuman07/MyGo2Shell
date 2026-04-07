@@ -59,14 +59,14 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 ## How It Works
 
 ```
-┌─────────┐     AppleScript      ┌────────┐     Get current     ┌──────────┐
-│         │ ──────────────────→  │        │ ──────────────────→ │          │
-│ MyGo2Shell│                      │ Finder │   directory path    │ Terminal │
-│         │                      │        │                     │   .app   │
-└─────────┘                      └────────┘                     └──────────┘
-     │                                                               │
-     │              cd /path/to/current/folder && clear              │
-     └───────────────────────────────────────────────────────────────┘
+┌────────────┐   AppleScript    ┌────────┐   Get current    ┌──────────┐
+│            │ ──────────────→  │        │ ──────────────→  │          │
+│ MyGo2Shell │                  │ Finder │  directory path   │ Terminal │
+│            │                  │        │                  │   .app   │
+└────────────┘                  └────────┘                  └──────────┘
+      │                                                          │
+      │           cd /path/to/current/folder && clear            │
+      └──────────────────────────────────────────────────────────┘
 ```
 
 1. **Click** the MyGo2Shell icon in the Finder toolbar
