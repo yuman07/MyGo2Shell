@@ -156,8 +156,15 @@ MyGo2Shell/
 
 ## FAQ
 
+**Q: macOS says the app is "damaged and can't be opened"?**
+> This is caused by macOS Gatekeeper quarantining unsigned apps downloaded from the internet. Run the following command in Terminal to remove the quarantine flag:
+> ```bash
+> xattr -cr /Applications/MyGo2Shell.app
+> ```
+> Then double-click to open it normally.
+
 **Q: Why does macOS say the app is from an unidentified developer?**
-> Since the app is not signed with an Apple Developer certificate, macOS Gatekeeper may block it. Right-click the app and select **Open**, then click **Open** in the dialog to bypass this warning.
+> Right-click the app and select **Open**, then click **Open** in the dialog to bypass this warning.
 
 **Q: Can I use iTerm2 / Warp / other terminals instead of Terminal.app?**
 > The current version only supports the built-in Terminal.app. You can modify the AppleScript in `main.swift` to target your preferred terminal.
