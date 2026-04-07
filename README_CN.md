@@ -9,9 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/v/release/yuman07/MyGo2Shell?color=brightgreen&logo=github" alt="Release"></a>
+  <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
+  <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
+  <br>
   <img src="https://img.shields.io/badge/macOS-26.0%2B_(Tahoe)-blue?logo=apple" alt="macOS 26.0+">
-  <img src="https://img.shields.io/badge/Xcode-26.0%2B-1575F9?logo=xcode" alt="Xcode 26.0+">
-  <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 5.0">
+  <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
 </p>
