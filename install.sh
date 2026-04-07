@@ -2,7 +2,7 @@
 set -e
 
 APP_NAME="MyGo2Shell"
-DOWNLOAD_URL="https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.app.zip"
+DOWNLOAD_URL="https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.zip"
 TMP_FILE="/tmp/$APP_NAME.zip"
 INSTALL_DIR="/Applications"
 
