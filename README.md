@@ -181,13 +181,13 @@ MyGo2Shell/
 > Yes! Use `defaults write` to set your preferred terminal:
 > ```bash
 > # Use iTerm2
-> defaults write com.heruijun.MyGo2Shell terminal -string "iTerm"
+> defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
 >
 > # Use Warp
-> defaults write com.heruijun.MyGo2Shell terminal -string "Warp"
+> defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
 >
 > # Reset to default Terminal.app
-> defaults delete com.heruijun.MyGo2Shell terminal
+> defaults delete com.go2shell.MyGo2Shell terminal
 > ```
 > The terminal name should match the application name in `/Applications/`. iTerm2 has built-in special handling; other terminals use the standard AppleScript `do script` interface.
 

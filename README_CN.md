@@ -182,13 +182,13 @@ MyGo2Shell/
 > 支持！通过 `defaults write` 命令即可切换终端：
 > ```bash
 > # 使用 iTerm2
-> defaults write com.heruijun.MyGo2Shell terminal -string "iTerm"
+> defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
 >
 > # 使用 Warp
-> defaults write com.heruijun.MyGo2Shell terminal -string "Warp"
+> defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
 >
 > # 恢复默认的 Terminal.app
-> defaults delete com.heruijun.MyGo2Shell terminal
+> defaults delete com.go2shell.MyGo2Shell terminal
 > ```
 > 终端名称应与 `/Applications/` 中的应用名一致。iTerm2 有内置的专属适配，其他终端使用标准的 AppleScript `do script` 接口。
 
