@@ -73,7 +73,17 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 
 ## 安装方法
 
-### 方式一：从源码构建（推荐）
+### 方式一：一键安装（推荐）
+
+打开终端，粘贴以下命令：
+
+```bash
+curl -L https://github.com/yuman07/MyGo2Shell/releases/download/v1.0.0/MyGo2Shell.app.zip -o /tmp/MyGo2Shell.zip && unzip -o /tmp/MyGo2Shell.zip -d /Applications/ && xattr -cr /Applications/MyGo2Shell.app && rm /tmp/MyGo2Shell.zip && echo "✅ MyGo2Shell 安装成功！"
+```
+
+自动完成下载、安装和配置，即装即用。
+
+### 方式二：从源码构建
 
 ```bash
 # 克隆仓库
@@ -87,7 +97,7 @@ cd MyGo2Shell
 cp -r build/MyGo2Shell.app /Applications/
 ```
 
-### 方式二：使用 Xcode 构建
+### 方式三：使用 Xcode 构建
 
 1. 在 Xcode 中打开 `MyGo2Shell.xcodeproj`
 2. 选择 **Product > Build**（或按 `Cmd + B`）
