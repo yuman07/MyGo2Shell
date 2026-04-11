@@ -8,7 +8,7 @@ command -v actool >/dev/null 2>&1 || { echo "Error: actool not found. Run: xcode
 APP_NAME="MyGo2Shell"
 BUILD_DIR="build"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
-DEPLOYMENT_TARGET="12.0"
+DEPLOYMENT_TARGET="14.0"
 
 rm -rf "$BUILD_DIR"
 

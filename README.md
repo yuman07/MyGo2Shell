@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-12.0%2B_(Monterey)-blue?logo=apple" alt="macOS 12.0+">
+  <img src="https://img.shields.io/badge/macOS-14.0%2B_(Sonoma)-blue?logo=apple" alt="macOS 14.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -131,7 +131,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
-| **macOS** | 12.0 (Monterey) or later | Deployment target is set to macOS 12.0 |
+| **macOS** | 14.0 (Sonoma) or later | Deployment target is set to macOS 14.0 |
 | **Architecture** | Apple Silicon (arm64) | Intel Macs are not supported |
 | **Permissions** | Automation (AppleScript) | System will prompt on first launch |
 
@@ -139,7 +139,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
-| **Xcode** | 26.3 or later | Required for macOS 12.0 SDK and Swift 6.0 |
+| **Xcode** | 26.3 or later | Required for macOS 14.0 SDK and Swift 6.0 |
 | **Swift** | 6.0 or later | Included with Xcode |
 | **Xcode Command Line Tools** | Required for `build.sh` | Install via `xcode-select --install` |
 

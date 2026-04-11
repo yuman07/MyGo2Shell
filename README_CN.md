@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-12.0%2B_(Monterey)-blue?logo=apple" alt="macOS 12.0+">
+  <img src="https://img.shields.io/badge/macOS-14.0%2B_(Sonoma)-blue?logo=apple" alt="macOS 14.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -131,7 +131,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
-| **macOS** | 12.0 (Monterey) 或更高版本 | 应用的 Deployment Target 设定为 macOS 12.0 |
+| **macOS** | 14.0 (Sonoma) 或更高版本 | 应用的 Deployment Target 设定为 macOS 14.0 |
 | **芯片架构** | Apple Silicon (arm64) | 不支持 Intel Mac |
 | **权限** | 自动化（AppleScript）权限 | 首次启动时系统会弹窗提示授权 |
 
@@ -139,7 +139,7 @@ cp -r build/MyGo2Shell.app /Applications/
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
-| **Xcode** | 26.3 或更高版本 | 需要 macOS 12.0 SDK 和 Swift 6.0 |
+| **Xcode** | 26.3 或更高版本 | 需要 macOS 14.0 SDK 和 Swift 6.0 |
 | **Swift** | 6.0 或更高版本 | 已包含在 Xcode 中 |
 | **Xcode Command Line Tools** | `build.sh` 构建时必需 | 通过 `xcode-select --install` 安装 |
 
