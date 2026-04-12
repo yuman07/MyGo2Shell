@@ -30,21 +30,21 @@
 MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly at the directory you're currently viewing in Finder. Simply drag it to the Finder toolbar and click — no configuration needed.
 
 ```
- Finder Window (/Users/you/Projects/MyApp)
- ┌──────────────────────────────────────────────┐
- │  ← → ▲  📁 MyApp    [MyGo2Shell]  <- Click! │
- ├──────────────────────────────────────────────┤
- │  📂 src                                      │
- │  📂 docs                                     │
- │  📄 README.md                                │
- └──────────────────────────────────────────────┘
-                     ↓
- Terminal
- ┌──────────────────────────────────────────────┐
- │  $ cd /Users/you/Projects/MyApp              │
- │  $  _                                        │
- │                                              │
- └──────────────────────────────────────────────┘
+Finder (/Users/you/Projects/MyApp)
++----------------------------------------------+
+|  <- ->    MyApp      [MyGo2Shell] <- Click!  |
+|----------------------------------------------|
+|  src/                                        |
+|  docs/                                       |
+|  README.md                                   |
++----------------------------------------------+
+                       |
+                       v
+Terminal
++----------------------------------------------+
+|  $ cd /Users/you/Projects/MyApp              |
+|  $ _                                         |
++----------------------------------------------+
 ```
 
 ## Features
@@ -101,8 +101,8 @@ This downloads the latest release, installs it to `/Applications/`, and removes 
 | **4** | Release — the icon now appears in the toolbar |
 
 ```
- Before:  ← → ▲  📁 Documents
- After:   ← → ▲  📁 Documents   [>_]  <- MyGo2Shell!
+Before:  <- ->    Documents
+After:   <- ->    Documents   [>_]  <- MyGo2Shell!
 ```
 
 > **Tip:** To remove it later, hold `Cmd` and drag the icon out of the toolbar.
@@ -115,8 +115,8 @@ This downloads the latest release, installs it to `/Applications/`, and removes 
 
 | Item | Minimum Version | Notes |
 |------|----------------|-------|
-| **macOS** | 14.5 (Sonoma) | Required by Xcode 16.0 |
-| **Xcode** | 16.0 | Includes Swift 6.0, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
+| **macOS** | 15.6 (Sequoia) | Required by Xcode 26 |
+| **Xcode** | 26.0 | Includes Swift 6, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
 
 ### Build with Command Line
 
@@ -158,13 +158,17 @@ Then in Xcode:
 
 ## Technical Overview
 
-MyGo2Shell is a zero-UI Cocoa application (`LSUIElement = true`) that acts as a bridge between Finder and your terminal emulator. When launched, it executes a three-phase workflow:
+MyGo2Shell is a zero-UI Cocoa application (`LSUIElement = true`) that acts as a bridge between Finder and your terminal emulator. It has no visible windows, no menu bar icon, and no lingering process — it launches, does its job, and exits.
 
-1. **Path acquisition** — An AppleScript queries Finder for the frontmost window's directory path. If no window is open, it falls back to the Desktop.
-2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` to determine which terminal to use, then dispatches to a handler optimized for that terminal. iTerm2 uses tab-aware AppleScript (creates a tab in an existing window or a new window), Warp uses `open -a` (native directory argument), and all others use the generic `do script` AppleScript interface.
-3. **Self-termination** — After dispatching the terminal command, the app calls `NSApp.terminate` on the next run loop iteration. No process lingers in memory.
+The core design follows a **fire-and-forget** pattern: the app bootstraps an `NSApplication` run loop solely to host AppleScript execution, then terminates on the next iteration. This is necessary because `NSAppleScript` requires an active run loop to dispatch Apple Events. Without it, Finder and terminal queries would silently fail.
 
-Input sanitization strips non-alphanumeric characters from the terminal name (preventing AppleScript injection), and a fallback mechanism redirects to Terminal.app if the configured terminal is not installed.
+When launched, the app executes a three-phase workflow:
+
+1. **Path acquisition** — An `NSAppleScript` queries Finder for the frontmost window's target directory via Apple Events. If no Finder window is open (or the target cannot be resolved as an alias), the script falls back to `~/Desktop`. This two-tier approach handles edge cases like Finder windows showing search results, AirDrop, or network volumes that lack a POSIX path.
+
+2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` (set via `defaults write com.go2shell.MyGo2Shell terminal "name"`). The raw value is sanitized by stripping all characters except alphanumerics, spaces, and hyphens — this prevents AppleScript injection since the terminal name is interpolated into script strings. The sanitized name is then matched (case-insensitive) against built-in handlers: iTerm2 gets tab-aware AppleScript that reuses an existing window or creates a new one; Warp gets `open -a` with a native directory argument; everything else gets the generic `do script` AppleScript interface. If the configured terminal is not found in `/Applications/`, `/System/Applications/`, or `~/Applications/`, the app falls back to Terminal.app.
+
+3. **Self-termination** — After dispatching the terminal command, `NSApp.terminate` is called asynchronously via `DispatchQueue.main.async`. The async dispatch ensures the AppleScript execution completes before the app tears down.
 
 ### Tech Stack
 
@@ -180,43 +184,43 @@ Input sanitization strips non-alphanumeric characters from the terminal name (pr
 
 ### Architecture
 
+```mermaid
+graph TD
+    Finder[Finder.app] -->|"Apple Events: frontmost window path"| Router
+    UD[UserDefaults] -->|"terminal preference"| Router
+
+    subgraph App["MyGo2Shell.app (zero-UI)"]
+        Router[Terminal Router] -->|"iTerm / iTerm2"| IH[iTerm Handler]
+        Router -->|"Warp"| WH[Warp Handler]
+        Router -->|"default / other"| GH[Generic Handler]
+    end
+
+    IH -->|"AppleScript: create tab + write cd"| iTerm[iTerm2.app]
+    WH -->|"open -a with directory path"| Warp[Warp.app]
+    GH -->|"AppleScript: do script cd"| Term["Terminal.app / Other"]
 ```
-┌──────────────────────────────────────────────────────────┐
-│                       MyGo2Shell                         │
-│                                                          │
-│  ┌─────────────┐    ┌──────────────┐    ┌────────────┐  │
-│  │ UserDefaults │───→│ Terminal     │───→│ AppleScript│  │
-│  │ (terminal)   │    │ Router       │    │ Dispatcher │  │
-│  └─────────────┘    └──────────────┘    └─────┬──────┘  │
-│                                                │         │
-└────────────────────────────────────────────────┼─────────┘
-                                                 │
-                    ┌────────────────────────────┬┼─────────────┐
-                    │                            ││             │
-               ┌────▼─────┐              ┌───────▼▼──┐   ┌─────▼────┐
-               │  Finder   │              │ Terminal  │   │  iTerm2  │
-               │(get path) │              │ / Warp /  │   │(tab mgmt)│
-               └───────────┘              │  Generic  │   └──────────┘
-                                          └───────────┘
-```
+
+- **Path acquisition flow** — Finder.app receives an Apple Events query from the Terminal Router, returning the POSIX path of the frontmost window's target. If the query fails, the router falls back to `~/Desktop`
+- **Terminal routing logic** — The router reads the user's terminal preference from UserDefaults, sanitizes it (stripping unsafe characters), and dispatches to one of three specialized handlers based on case-insensitive name matching
+- **Handler specialization** — Each handler is optimized for its target: iTerm Handler uses tab-aware AppleScript (reuses existing windows), Warp Handler uses native `open -a` (Warp accepts directory arguments directly), and Generic Handler uses the universal `do script` AppleScript interface that works with any scriptable terminal
 
 ### Project Structure
 
 ```
 MyGo2Shell/
-├── MyGo2Shell/
-│   ├── main.swift              # App delegate, terminal routing, AppleScript execution
-│   ├── Info.plist              # Bundle metadata (LSUIElement, version, permissions)
-│   ├── MyGo2Shell.entitlements # Apple Events automation entitlement
-│   └── Assets.xcassets/        # App icon (16×16 to 512×512, 1x and 2x)
-├── assets/
-│   └── app-icon.png            # Source icon file (128×128)
-├── MyGo2Shell.xcodeproj/       # Xcode project configuration
-├── build.sh                    # CLI build: swiftc + actool → .app bundle
-├── install.sh                  # One-line installer (downloads latest release)
-├── README.md                   # English documentation
-├── README_ZH.md                # Chinese documentation
-└── LICENSE                     # MIT License
+|-- MyGo2Shell/
+|   |-- main.swift              # App delegate, terminal routing, AppleScript execution
+|   |-- Info.plist              # Bundle metadata (LSUIElement, version, permissions)
+|   |-- MyGo2Shell.entitlements # Apple Events automation entitlement
+|   `-- Assets.xcassets/        # App icon (16x16 to 512x512, 1x and 2x)
+|-- assets/
+|   `-- app-icon.png            # Source icon file (128x128)
+|-- MyGo2Shell.xcodeproj/       # Xcode project configuration
+|-- build.sh                    # CLI build: swiftc + actool -> .app bundle
+|-- install.sh                  # One-line installer (downloads latest release)
+|-- README.md                   # English documentation
+|-- README_ZH.md                # Chinese documentation
+`-- LICENSE                     # MIT License
 ```
 
 ## FAQ
