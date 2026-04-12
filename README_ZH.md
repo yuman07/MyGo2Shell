@@ -166,7 +166,7 @@ MyGo2Shell 是一个无界面的 Cocoa 应用（`LSUIElement = true`），充当
 
 1. **路径获取** — 通过 `NSAppleScript` 向 Finder 发送 Apple Events 查询，获取最前面窗口的目标目录的 POSIX 路径。如果没有打开任何 Finder 窗口（或目标无法解析为 alias），脚本回退到 `~/Desktop`。这种两级策略能够处理 Finder 窗口显示搜索结果、AirDrop 或缺少 POSIX 路径的网络卷宗等边界情况。
 
-2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm2 使用感知标签页的 AppleScript（复用现有窗口或创建新窗口）；Warp 使用 `open -a`（原生目录参数）；其余终端使用通用的 `do script` AppleScript 接口。如果配置的终端在 `/Applications/`、`/System/Applications/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
+2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm2 使用感知标签页的 AppleScript（复用现有窗口或创建新窗口）；Ghostty 使用其 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口；Warp 使用 `open -a`（原生目录参数）；其余终端使用通用的 `do script` AppleScript 接口。如果配置的终端在 `/Applications/`、`/System/Applications/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
 
 3. **自动退出** — 分派终端命令后，通过 `DispatchQueue.main.async` 异步调用 `NSApp.terminate`。异步分派确保 AppleScript 执行完成后应用才会拆除。
 
@@ -191,18 +191,20 @@ graph TD
 
     subgraph App["MyGo2Shell.app (zero-UI)"]
         Router[Terminal Router] -->|"iTerm / iTerm2"| IH[iTerm Handler]
+        Router -->|"Ghostty"| GtH[Ghostty Handler]
         Router -->|"Warp"| WH[Warp Handler]
         Router -->|"default / other"| GH[Generic Handler]
     end
 
     IH -->|"AppleScript: create tab + write cd"| iTerm[iTerm2.app]
+    GtH -->|"AppleScript: surface config + new tab/window"| Ghostty[Ghostty.app]
     WH -->|"open -a with directory path"| Warp[Warp.app]
     GH -->|"AppleScript: do script cd"| Term["Terminal.app / Other"]
 ```
 
 - **路径获取流** — Finder.app 接收来自 Terminal Router 的 Apple Events 查询，返回最前面窗口目标的 POSIX 路径。如果查询失败，路由器回退到 `~/Desktop`
 - **终端路由逻辑** — 路由器从 UserDefaults 读取用户的终端偏好，清洗输入（剥离不安全字符），然后根据大小写无关的名称匹配分派到三个专用处理器之一
-- **处理器特化** — 每个处理器针对目标终端优化：iTerm Handler 使用感知标签页的 AppleScript（复用现有窗口），Warp Handler 使用原生 `open -a`（Warp 直接接受目录参数），Generic Handler 使用通用的 `do script` AppleScript 接口，兼容所有支持脚本的终端
+- **处理器特化** — 每个处理器针对目标终端优化：iTerm Handler 使用感知标签页的 AppleScript（复用现有窗口），Ghostty Handler 使用 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口，Warp Handler 使用原生 `open -a`（Warp 直接接受目录参数），Generic Handler 使用通用的 `do script` AppleScript 接口，兼容所有支持脚本的终端
 
 ### 项目结构
 
@@ -232,11 +234,14 @@ MyGo2Shell/
 > ```
 > 然后重新打开即可。
 
-**Q：能否使用 iTerm2 / Warp 等第三方终端代替 Terminal.app？**
+**Q：能否使用 iTerm2 / Ghostty / Warp 等第三方终端代替 Terminal.app？**
 > 支持！通过 `defaults write` 命令即可切换终端：
 > ```bash
 > # 使用 iTerm2
 > defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
+>
+> # 使用 Ghostty（需要 Ghostty 1.3+）
+> defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
 >
 > # 使用 Warp
 > defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
@@ -244,7 +249,7 @@ MyGo2Shell/
 > # 恢复默认的 Terminal.app
 > defaults delete com.go2shell.MyGo2Shell terminal
 > ```
-> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2 和 Warp 有内置的原生适配，其他终端使用标准的 AppleScript `do script` 接口。
+> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2、Ghostty 和 Warp 有内置的原生适配，其他终端使用标准的 AppleScript `do script` 接口。
 
 **Q：应用打开了终端，但没有跳转到正确的目录？**
 > 请确认你已在 **系统设置 > 隐私与安全性 > 自动化** 中授予了相关权限。可能需要先移除再重新添加权限。

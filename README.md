@@ -166,7 +166,7 @@ When launched, the app executes a three-phase workflow:
 
 1. **Path acquisition** — An `NSAppleScript` queries Finder for the frontmost window's target directory via Apple Events. If no Finder window is open (or the target cannot be resolved as an alias), the script falls back to `~/Desktop`. This two-tier approach handles edge cases like Finder windows showing search results, AirDrop, or network volumes that lack a POSIX path.
 
-2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` (set via `defaults write com.go2shell.MyGo2Shell terminal "name"`). The raw value is sanitized by stripping all characters except alphanumerics, spaces, and hyphens — this prevents AppleScript injection since the terminal name is interpolated into script strings. The sanitized name is then matched (case-insensitive) against built-in handlers: iTerm2 gets tab-aware AppleScript that reuses an existing window or creates a new one; Warp gets `open -a` with a native directory argument; everything else gets the generic `do script` AppleScript interface. If the configured terminal is not found in `/Applications/`, `/System/Applications/`, or `~/Applications/`, the app falls back to Terminal.app.
+2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` (set via `defaults write com.go2shell.MyGo2Shell terminal "name"`). The raw value is sanitized by stripping all characters except alphanumerics, spaces, and hyphens — this prevents AppleScript injection since the terminal name is interpolated into script strings. The sanitized name is then matched (case-insensitive) against built-in handlers: iTerm2 gets tab-aware AppleScript that reuses an existing window or creates a new one; Ghostty uses its `surface configuration` AppleScript API to set the working directory and create a tab or window; Warp gets `open -a` with a native directory argument; everything else gets the generic `do script` AppleScript interface. If the configured terminal is not found in `/Applications/`, `/System/Applications/`, or `~/Applications/`, the app falls back to Terminal.app.
 
 3. **Self-termination** — After dispatching the terminal command, `NSApp.terminate` is called asynchronously via `DispatchQueue.main.async`. The async dispatch ensures the AppleScript execution completes before the app tears down.
 
@@ -191,18 +191,20 @@ graph TD
 
     subgraph App["MyGo2Shell.app (zero-UI)"]
         Router[Terminal Router] -->|"iTerm / iTerm2"| IH[iTerm Handler]
+        Router -->|"Ghostty"| GtH[Ghostty Handler]
         Router -->|"Warp"| WH[Warp Handler]
         Router -->|"default / other"| GH[Generic Handler]
     end
 
     IH -->|"AppleScript: create tab + write cd"| iTerm[iTerm2.app]
+    GtH -->|"AppleScript: surface config + new tab/window"| Ghostty[Ghostty.app]
     WH -->|"open -a with directory path"| Warp[Warp.app]
     GH -->|"AppleScript: do script cd"| Term["Terminal.app / Other"]
 ```
 
 - **Path acquisition flow** — Finder.app receives an Apple Events query from the Terminal Router, returning the POSIX path of the frontmost window's target. If the query fails, the router falls back to `~/Desktop`
 - **Terminal routing logic** — The router reads the user's terminal preference from UserDefaults, sanitizes it (stripping unsafe characters), and dispatches to one of three specialized handlers based on case-insensitive name matching
-- **Handler specialization** — Each handler is optimized for its target: iTerm Handler uses tab-aware AppleScript (reuses existing windows), Warp Handler uses native `open -a` (Warp accepts directory arguments directly), and Generic Handler uses the universal `do script` AppleScript interface that works with any scriptable terminal
+- **Handler specialization** — Each handler is optimized for its target: iTerm Handler uses tab-aware AppleScript (reuses existing windows), Ghostty Handler uses the `surface configuration` AppleScript API to set the working directory natively and create a tab or window, Warp Handler uses native `open -a` (Warp accepts directory arguments directly), and Generic Handler uses the universal `do script` AppleScript interface that works with any scriptable terminal
 
 ### Project Structure
 
@@ -232,11 +234,14 @@ MyGo2Shell/
 > ```
 > Then open it normally.
 
-**Q: Can I use iTerm2 / Warp / other terminals instead of Terminal.app?**
+**Q: Can I use iTerm2 / Ghostty / Warp / other terminals instead of Terminal.app?**
 > Yes! Use `defaults write` to set your preferred terminal:
 > ```bash
 > # Use iTerm2
 > defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
+>
+> # Use Ghostty (requires Ghostty 1.3+)
+> defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
 >
 > # Use Warp
 > defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
@@ -244,7 +249,7 @@ MyGo2Shell/
 > # Reset to default Terminal.app
 > defaults delete com.go2shell.MyGo2Shell terminal
 > ```
-> The terminal name should match the application name in `/Applications/`. iTerm2 and Warp have built-in native handling; other terminals use the standard AppleScript `do script` interface.
+> The terminal name should match the application name in `/Applications/`. iTerm2, Ghostty, and Warp have built-in native handling; other terminals use the standard AppleScript `do script` interface.
 
 **Q: The app opens Terminal but doesn't navigate to the right folder?**
 > Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.

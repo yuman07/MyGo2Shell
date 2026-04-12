@@ -60,6 +60,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             openInITerm(path: path)
         } else if lowercased == "warp" {
             openInWarp(path: path)
+        } else if lowercased == "ghostty" {
+            openInGhostty(path: path)
         } else {
             openInGenericTerminal(name: terminal, path: path)
         }
@@ -79,6 +81,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             tell current session of current window
                 write text "cd " & quoted form of "\(path)" & " && clear"
             end tell
+        end tell
+        """
+        runAppleScript(source)
+    }
+
+    private func openInGhostty(path: String) {
+        let source = """
+        tell application "Ghostty"
+            activate
+            set cfg to new surface configuration
+            set initial working directory of cfg to "\(path)"
+            if (count of windows) > 0 then
+                new tab with cfg
+            else
+                new window with cfg
+            end if
         end tell
         """
         runAppleScript(source)
