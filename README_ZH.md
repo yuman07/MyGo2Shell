@@ -227,13 +227,6 @@ MyGo2Shell/
 
 ## 常见问题
 
-**Q：双击提示「已损坏，无法打开」？**
-> 这是 macOS Gatekeeper 对未签名应用的安全拦截，并非真的损坏。在终端中执行以下命令移除隔离标记：
-> ```bash
-> xattr -cr /Applications/MyGo2Shell.app
-> ```
-> 然后重新打开即可。
-
 **Q：能否使用 iTerm2 / Ghostty / Warp 等第三方终端代替 Terminal.app？**
 > 支持！通过 `defaults write` 命令即可切换终端：
 > ```bash

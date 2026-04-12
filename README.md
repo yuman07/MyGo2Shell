@@ -227,13 +227,6 @@ MyGo2Shell/
 
 ## FAQ
 
-**Q: macOS says the app is "damaged and can't be opened"?**
-> This is caused by macOS Gatekeeper quarantining unsigned apps. Run the following command to remove the quarantine flag:
-> ```bash
-> xattr -cr /Applications/MyGo2Shell.app
-> ```
-> Then open it normally.
-
 **Q: Can I use iTerm2 / Ghostty / Warp / other terminals instead of Terminal.app?**
 > Yes! Use `defaults write` to set your preferred terminal:
 > ```bash
