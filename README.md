@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> | <a href="README_CN.md">中文</a>
+  <a href="README.md">English</a> | <a href="README_ZH.md">中文</a>
 </p>
 
 ---
@@ -32,7 +32,7 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 ```
  Finder Window (/Users/you/Projects/MyApp)
  ┌──────────────────────────────────────────────┐
- │  ← → ▲  📁 MyApp    [MyGo2Shell]  <- Click!   │
+ │  ← → ▲  📁 MyApp    [MyGo2Shell]  <- Click! │
  ├──────────────────────────────────────────────┤
  │  📂 src                                      │
  │  📂 docs                                     │
@@ -52,100 +52,44 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 - **One-click launch** — Click the toolbar icon to instantly open Terminal at the current Finder directory
 - **Multiple terminal support** — Works with Terminal.app, iTerm2, Warp, and more via a single `defaults write` command
 - **Zero configuration** — Works out of the box with Terminal.app, no setup required
-- **Minimal footprint** — Single-file Swift app (~100 lines of code), launches and exits immediately
+- **Minimal footprint** — Single-file Swift app (~100 lines), launches and exits immediately
 - **Native macOS experience** — Uses AppleScript to communicate with Finder and Terminal seamlessly
 - **Finder toolbar integration** — Lives right in your Finder toolbar for quick access
 
-## How It Works
+## Install
 
-```
-┌────────────┐   AppleScript    ┌────────┐   Get current    ┌──────────┐
-│            │ ──────────────→  │        │ ──────────────→  │          │
-│ MyGo2Shell │                  │ Finder │  directory path   │ Terminal │
-│            │                  │        │                  │   .app   │
-└────────────┘                  └────────┘                  └──────────┘
-      │                                                          │
-      │           cd /path/to/current/folder && clear            │
-      └──────────────────────────────────────────────────────────┘
-```
-
-1. **Click** the MyGo2Shell icon in the Finder toolbar
-2. The app reads the **current Finder window's directory** via AppleScript
-3. If no Finder window is open, it defaults to the **Desktop**
-4. A new Terminal window opens with `cd` to that directory
-5. The app **exits automatically** — no lingering process
-
-## Prerequisites
-
-Check the following requirements **before** installation. If your system does not meet these conditions, MyGo2Shell will not work.
-
-| Item | Requirement |
-|------|-------------|
-| **Operating System** | macOS 14.0 (Sonoma) or later |
-| **Chip Architecture** | Apple Silicon (arm64) — Intel Macs are **not** supported |
-
-> If you only need to install the pre-built binary (Option 1 below), that's all you need. The following additional requirements apply only to building from source (Options 2 & 3):
-
-| Item | Requirement | How to get it |
-|------|-------------|---------------|
-| **Xcode** | 16.0 or later | Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
-| **Xcode Command Line Tools** | Required for `build.sh` | Run `xcode-select --install` in Terminal |
-| **Git** | Any version | Included with Xcode Command Line Tools |
-
-## Installation
-
-### macOS 14.0+ Apple Silicon (Recommended)
+### macOS (14.0+, Apple Silicon)
 
 #### Option 1: One-Line Install (Recommended)
 
-The easiest way to install. Open Terminal and paste the following command:
+Open Terminal and paste the following command:
 
 ```bash
-# Download, install, and configure MyGo2Shell in one step
 curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
-This will automatically download the latest release, install it to `/Applications/`, and remove the macOS quarantine flag — ready to use.
+This downloads the latest release, installs it to `/Applications/`, and removes the macOS quarantine flag automatically.
 
-#### Option 2: Build from Source with Command Line
+#### Option 2: Download from GitHub
 
-```bash
-# Step 1: Clone the repository to your local machine
-git clone https://github.com/yuman07/MyGo2Shell.git
+1. Go to the [Releases](https://github.com/yuman07/MyGo2Shell/releases) page
+2. Download the latest `.zip` file
+3. Extract and move `MyGo2Shell.app` to `/Applications/`
 
-# Step 2: Navigate into the project directory
-cd MyGo2Shell
+> **Note:** MyGo2Shell is not signed with an Apple Developer certificate, so macOS Gatekeeper may block it on first launch. Use any of the following methods to allow the app:
+>
+> **Method 1 — System Settings:**
+> Open **System Settings > Privacy & Security**, scroll to the bottom, find the MyGo2Shell blocked message, and click **Open Anyway**.
+>
+> **Method 2 — Right-click Open:**
+> Right-click (or Control-click) `MyGo2Shell.app` in `/Applications/`, select **Open**, then click **Open** in the confirmation dialog.
+>
+> **Method 3 — Remove quarantine flag:**
+> ```bash
+> xattr -cr /Applications/MyGo2Shell.app
+> ```
 
-# Step 3: Run the build script to compile the app (requires Xcode Command Line Tools)
-./build.sh
-
-# Step 4: Copy the built app to the Applications folder
-cp -r build/MyGo2Shell.app /Applications/
-
-# Step 5: Remove the macOS quarantine flag so the app can launch without Gatekeeper warnings
-xattr -cr /Applications/MyGo2Shell.app
-```
-
-#### Option 3: Build with Xcode
-
-```bash
-# Step 1: Clone the repository to your local machine
-git clone https://github.com/yuman07/MyGo2Shell.git
-
-# Step 2: Navigate into the project directory
-cd MyGo2Shell
-
-# Step 3: Open the Xcode project
-open MyGo2Shell.xcodeproj
-```
-
-Then, inside Xcode:
-
-1. Select **Product > Build** from the menu bar (or press `Cmd + B`) to compile the app
-2. Select **Product > Show Build Folder in Finder** to locate the built `MyGo2Shell.app`
-3. Drag `MyGo2Shell.app` to `/Applications/`
-
-### Add to Finder Toolbar
+#### Add to Finder Toolbar
 
 > This is the key step to make MyGo2Shell truly useful!
 
@@ -163,26 +107,126 @@ Then, inside Xcode:
 
 > **Tip:** To remove it later, hold `Cmd` and drag the icon out of the toolbar.
 
-## Privacy & Permissions
+## Development
 
-On first launch, macOS will ask you to grant MyGo2Shell permission to control **Finder** and **Terminal** via AppleScript. This is required for the app to:
+> **macOS only.** Build instructions are provided for macOS exclusively.
 
-- Read the current Finder window's directory path
-- Open a new Terminal window and run the `cd` command
+### Prerequisites
 
-You can manage these permissions in **System Settings > Privacy & Security > Automation**.
+| Item | Minimum Version | Notes |
+|------|----------------|-------|
+| **macOS** | 14.5 (Sonoma) | Required by Xcode 16.0 |
+| **Xcode** | 16.0 | Includes Swift 6.0, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
+
+### Build with Command Line
+
+```bash
+# Clone the repository
+git clone https://github.com/yuman07/MyGo2Shell.git
+
+# Navigate into the project directory
+cd MyGo2Shell
+
+# Run the build script (compiles arm64 binary, bundles app icon, generates .app)
+./build.sh
+
+# Copy the built app to the Applications folder
+cp -r build/MyGo2Shell.app /Applications/
+
+# Remove the macOS quarantine flag so the app can launch
+xattr -cr /Applications/MyGo2Shell.app
+```
+
+### Build with Xcode
+
+```bash
+# Clone the repository
+git clone https://github.com/yuman07/MyGo2Shell.git
+
+# Navigate into the project directory
+cd MyGo2Shell
+
+# Open the Xcode project
+open MyGo2Shell.xcodeproj
+```
+
+Then in Xcode:
+
+1. Select **Product > Build** (or press `Cmd + B`) to compile
+2. Select **Product > Show Build Folder in Finder** to locate `MyGo2Shell.app`
+3. Move `MyGo2Shell.app` to `/Applications/`
+
+## Technical Overview
+
+MyGo2Shell is a zero-UI Cocoa application (`LSUIElement = true`) that acts as a bridge between Finder and your terminal emulator. When launched, it executes a three-phase workflow:
+
+1. **Path acquisition** — An AppleScript queries Finder for the frontmost window's directory path. If no window is open, it falls back to the Desktop.
+2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` to determine which terminal to use, then dispatches to a handler optimized for that terminal. iTerm2 uses tab-aware AppleScript (creates a tab in an existing window or a new window), Warp uses `open -a` (native directory argument), and all others use the generic `do script` AppleScript interface.
+3. **Self-termination** — After dispatching the terminal command, the app calls `NSApp.terminate` on the next run loop iteration. No process lingers in memory.
+
+Input sanitization strips non-alphanumeric characters from the terminal name (preventing AppleScript injection), and a fallback mechanism redirects to Terminal.app if the configured terminal is not installed.
+
+### Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| Language | Swift 6.0 |
+| Framework | Cocoa (AppKit) |
+| IPC | AppleScript via `NSAppleScript` |
+| Configuration | `UserDefaults` (`defaults write`) |
+| Build System | Xcode / shell script (`swiftc` + `actool`) |
+| Architecture | arm64 (Apple Silicon) |
+| Deployment Target | macOS 14.0 (Sonoma) |
+
+### Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                       MyGo2Shell                         │
+│                                                          │
+│  ┌─────────────┐    ┌──────────────┐    ┌────────────┐  │
+│  │ UserDefaults │───→│ Terminal     │───→│ AppleScript│  │
+│  │ (terminal)   │    │ Router       │    │ Dispatcher │  │
+│  └─────────────┘    └──────────────┘    └─────┬──────┘  │
+│                                                │         │
+└────────────────────────────────────────────────┼─────────┘
+                                                 │
+                    ┌────────────────────────────┬┼─────────────┐
+                    │                            ││             │
+               ┌────▼─────┐              ┌───────▼▼──┐   ┌─────▼────┐
+               │  Finder   │              │ Terminal  │   │  iTerm2  │
+               │(get path) │              │ / Warp /  │   │(tab mgmt)│
+               └───────────┘              │  Generic  │   └──────────┘
+                                          └───────────┘
+```
+
+### Project Structure
+
+```
+MyGo2Shell/
+├── MyGo2Shell/
+│   ├── main.swift              # App delegate, terminal routing, AppleScript execution
+│   ├── Info.plist              # Bundle metadata (LSUIElement, version, permissions)
+│   ├── MyGo2Shell.entitlements # Apple Events automation entitlement
+│   └── Assets.xcassets/        # App icon (16×16 to 512×512, 1x and 2x)
+├── assets/
+│   └── app-icon.png            # Source icon file (128×128)
+├── MyGo2Shell.xcodeproj/       # Xcode project configuration
+├── build.sh                    # CLI build: swiftc + actool → .app bundle
+├── install.sh                  # One-line installer (downloads latest release)
+├── README.md                   # English documentation
+├── README_ZH.md                # Chinese documentation
+└── LICENSE                     # MIT License
+```
 
 ## FAQ
 
 **Q: macOS says the app is "damaged and can't be opened"?**
-> This is caused by macOS Gatekeeper quarantining unsigned apps downloaded from the internet. Run the following command in Terminal to remove the quarantine flag:
+> This is caused by macOS Gatekeeper quarantining unsigned apps. Run the following command to remove the quarantine flag:
 > ```bash
 > xattr -cr /Applications/MyGo2Shell.app
 > ```
-> Then double-click to open it normally.
-
-**Q: Why does macOS say the app is from an unidentified developer?**
-> Right-click the app and select **Open**, then click **Open** in the dialog to bypass this warning.
+> Then open it normally.
 
 **Q: Can I use iTerm2 / Warp / other terminals instead of Terminal.app?**
 > Yes! Use `defaults write` to set your preferred terminal:
@@ -201,26 +245,12 @@ You can manage these permissions in **System Settings > Privacy & Security > Aut
 **Q: The app opens Terminal but doesn't navigate to the right folder?**
 > Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.
 
-## Project Structure
-
-```
-MyGo2Shell/
-├── MyGo2Shell/
-│   ├── main.swift              # App entry point & core logic
-│   ├── Info.plist              # App metadata
-│   ├── MyGo2Shell.entitlements # AppleScript permissions
-│   └── Assets.xcassets/        # App icon assets
-├── assets/                     # Project assets (app icon source)
-├── MyGo2Shell.xcodeproj/       # Xcode project file
-├── build.sh                    # Command-line build script
-├── install.sh                  # One-line installation script
-├── README.md                   # English documentation
-└── README_CN.md                # Chinese documentation
-```
+**Q: On first launch, macOS asks for permission to control Finder / Terminal?**
+> This is expected. MyGo2Shell needs Apple Events access to read Finder's current directory and to open a terminal window. Click **OK** to grant permission. You can manage this in **System Settings > Privacy & Security > Automation**.
 
 ## Acknowledgments
 
-Inspired by the original [Go2Shell](https://zipzapmac.com/Go2Shell) app which is no longer actively maintained. This is a clean, open-source reimplementation built with pure Swift and AppleScript.
+Inspired by the original [Go2Shell](https://zipzapmac.com/Go2Shell) which is no longer actively maintained. MyGo2Shell is a clean, open-source reimplementation built with pure Swift and AppleScript.
 
 ## License
 
