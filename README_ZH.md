@@ -107,6 +107,34 @@ After:   <- ->    Documents   [>_]  <- MyGo2Shell!
 
 > **提示：** 如需移除，按住 `Cmd` 键将图标拖出工具栏即可。
 
+## 使用
+
+### 切换终端
+
+默认情况下，MyGo2Shell 打开 **Terminal.app**。如需使用其他终端，执行对应的 `defaults write` 命令：
+
+```bash
+# 使用 iTerm2
+defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
+
+# 使用 Ghostty（需要 Ghostty 1.3+）
+defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
+
+# 使用 Warp
+defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
+
+# 恢复默认的 Terminal.app
+defaults delete com.go2shell.MyGo2Shell terminal
+```
+
+终端名称应与 `/Applications/` 中的应用名一致。iTerm2、Ghostty 和 Warp 有内置的原生适配，其他终端使用标准的 AppleScript `do script` 接口。
+
+### 自动化权限
+
+首次启动时，macOS 会请求控制 Finder 和终端的权限，点击 **好** 即可授权——MyGo2Shell 需要 Apple Events 权限来读取 Finder 的当前目录并打开终端窗口。
+
+如果应用打开了终端但没有跳转到正确的目录，请检查 **系统设置 > 隐私与安全性 > 自动化** 中是否已授予相关权限。可能需要先移除再重新添加。
+
 ## 开发
 
 > **仅限 macOS。** 构建步骤仅适用于 macOS 环境。
@@ -224,31 +252,6 @@ MyGo2Shell/
 |-- README_ZH.md                # 中文文档
 `-- LICENSE                     # MIT 许可证
 ```
-
-## 常见问题
-
-**Q：能否使用 iTerm2 / Ghostty / Warp 等第三方终端代替 Terminal.app？**
-> 支持！通过 `defaults write` 命令即可切换终端：
-> ```bash
-> # 使用 iTerm2
-> defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
->
-> # 使用 Ghostty（需要 Ghostty 1.3+）
-> defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
->
-> # 使用 Warp
-> defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
->
-> # 恢复默认的 Terminal.app
-> defaults delete com.go2shell.MyGo2Shell terminal
-> ```
-> 终端名称应与 `/Applications/` 中的应用名一致。iTerm2、Ghostty 和 Warp 有内置的原生适配，其他终端使用标准的 AppleScript `do script` 接口。
-
-**Q：应用打开了终端，但没有跳转到正确的目录？**
-> 请确认你已在 **系统设置 > 隐私与安全性 > 自动化** 中授予了相关权限。可能需要先移除再重新添加权限。
-
-**Q：首次启动时，macOS 请求控制 Finder / Terminal 的权限？**
-> 这是正常行为。MyGo2Shell 需要 Apple Events 权限来读取 Finder 的当前目录并打开终端窗口。点击 **好** 授予权限即可。你可以在 **系统设置 > 隐私与安全性 > 自动化** 中管理这些权限。
 
 ## 致谢
 

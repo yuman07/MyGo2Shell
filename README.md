@@ -107,6 +107,34 @@ After:   <- ->    Documents   [>_]  <- MyGo2Shell!
 
 > **Tip:** To remove it later, hold `Cmd` and drag the icon out of the toolbar.
 
+## Usage
+
+### Switch Terminal
+
+By default, MyGo2Shell opens **Terminal.app**. To use a different terminal, run the corresponding `defaults write` command:
+
+```bash
+# Use iTerm2
+defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
+
+# Use Ghostty (requires Ghostty 1.3+)
+defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
+
+# Use Warp
+defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
+
+# Reset to default Terminal.app
+defaults delete com.go2shell.MyGo2Shell terminal
+```
+
+The terminal name should match the application name in `/Applications/`. iTerm2, Ghostty, and Warp have built-in native handling; other terminals use the standard AppleScript `do script` interface.
+
+### Automation Permissions
+
+On first launch, macOS will ask for permission to control Finder and your terminal. Click **OK** to grant access — MyGo2Shell needs Apple Events to read Finder's current directory and open a terminal window.
+
+If the app opens the terminal but doesn't navigate to the right folder, check **System Settings > Privacy & Security > Automation** and make sure the relevant permissions are granted. You may need to remove and re-add them.
+
 ## Development
 
 > **macOS only.** Build instructions are provided for macOS exclusively.
@@ -224,31 +252,6 @@ MyGo2Shell/
 |-- README_ZH.md                # Chinese documentation
 `-- LICENSE                     # MIT License
 ```
-
-## FAQ
-
-**Q: Can I use iTerm2 / Ghostty / Warp / other terminals instead of Terminal.app?**
-> Yes! Use `defaults write` to set your preferred terminal:
-> ```bash
-> # Use iTerm2
-> defaults write com.go2shell.MyGo2Shell terminal -string "iTerm"
->
-> # Use Ghostty (requires Ghostty 1.3+)
-> defaults write com.go2shell.MyGo2Shell terminal -string "Ghostty"
->
-> # Use Warp
-> defaults write com.go2shell.MyGo2Shell terminal -string "Warp"
->
-> # Reset to default Terminal.app
-> defaults delete com.go2shell.MyGo2Shell terminal
-> ```
-> The terminal name should match the application name in `/Applications/`. iTerm2, Ghostty, and Warp have built-in native handling; other terminals use the standard AppleScript `do script` interface.
-
-**Q: The app opens Terminal but doesn't navigate to the right folder?**
-> Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.
-
-**Q: On first launch, macOS asks for permission to control Finder / Terminal?**
-> This is expected. MyGo2Shell needs Apple Events access to read Finder's current directory and to open a terminal window. Click **OK** to grant permission. You can manage this in **System Settings > Privacy & Security > Automation**.
 
 ## Acknowledgments
 
