@@ -75,37 +75,75 @@ MyGo2Shell is a lightweight macOS utility that opens **Terminal.app** directly a
 4. A new Terminal window opens with `cd` to that directory
 5. The app **exits automatically** — no lingering process
 
+## Prerequisites
+
+Check the following requirements **before** installation. If your system does not meet these conditions, MyGo2Shell will not work.
+
+| Item | Requirement |
+|------|-------------|
+| **Operating System** | macOS 14.0 (Sonoma) or later |
+| **Chip Architecture** | Apple Silicon (arm64) — Intel Macs are **not** supported |
+
+> If you only need to install the pre-built binary (Option 1 below), that's all you need. The following additional requirements apply only to building from source (Options 2 & 3):
+
+| Item | Requirement | How to get it |
+|------|-------------|---------------|
+| **Xcode** | 16.0 or later | Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
+| **Xcode Command Line Tools** | Required for `build.sh` | Run `xcode-select --install` in Terminal |
+| **Git** | Any version | Included with Xcode Command Line Tools |
+
 ## Installation
 
-### Option 1: One-Line Install (Recommended)
+### macOS 14.0+ Apple Silicon (Recommended)
 
-Open Terminal and paste the following command:
+#### Option 1: One-Line Install (Recommended)
+
+The easiest way to install. Open Terminal and paste the following command:
 
 ```bash
+# Download, install, and configure MyGo2Shell in one step
 curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
-This will automatically download the latest release, install, and configure the app — ready to use.
+This will automatically download the latest release, install it to `/Applications/`, and remove the macOS quarantine flag — ready to use.
 
-### Option 2: Build from Source
+#### Option 2: Build from Source with Command Line
 
 ```bash
-# Clone the repository
+# Step 1: Clone the repository to your local machine
 git clone https://github.com/yuman07/MyGo2Shell.git
+
+# Step 2: Navigate into the project directory
 cd MyGo2Shell
 
-# Build the app
+# Step 3: Run the build script to compile the app (requires Xcode Command Line Tools)
 ./build.sh
 
-# Copy to Applications
+# Step 4: Copy the built app to the Applications folder
 cp -r build/MyGo2Shell.app /Applications/
+
+# Step 5: Remove the macOS quarantine flag so the app can launch without Gatekeeper warnings
+xattr -cr /Applications/MyGo2Shell.app
 ```
 
-### Option 3: Build with Xcode
+#### Option 3: Build with Xcode
 
-1. Open `MyGo2Shell.xcodeproj` in Xcode
-2. Select **Product > Build** (or press `Cmd + B`)
-3. Copy the built `MyGo2Shell.app` to `/Applications/`
+```bash
+# Step 1: Clone the repository to your local machine
+git clone https://github.com/yuman07/MyGo2Shell.git
+
+# Step 2: Navigate into the project directory
+cd MyGo2Shell
+
+# Step 3: Open the Xcode project
+open MyGo2Shell.xcodeproj
+```
+
+Then, inside Xcode:
+
+1. Select **Product > Build** from the menu bar (or press `Cmd + B`) to compile the app
+2. Select **Product > Show Build Folder in Finder** to locate the built `MyGo2Shell.app`
+3. Drag `MyGo2Shell.app` to `/Applications/`
 
 ### Add to Finder Toolbar
 
@@ -125,24 +163,6 @@ cp -r build/MyGo2Shell.app /Applications/
 
 > **Tip:** To remove it later, hold `Cmd` and drag the icon out of the toolbar.
 
-## Requirements
-
-### Runtime Requirements
-
-| Item | Requirement | Notes |
-|------|-------------|-------|
-| **macOS** | 14.0 (Sonoma) or later | Deployment target is set to macOS 14.0 |
-| **Architecture** | Apple Silicon (arm64) | Intel Macs are not supported |
-| **Permissions** | Automation (AppleScript) | System will prompt on first launch |
-
-### Build Requirements
-
-| Item | Requirement | Notes |
-|------|-------------|-------|
-| **Xcode** | 26.3 or later | Required for macOS 14.0 SDK and Swift 6.0 |
-| **Swift** | 6.0 or later | Included with Xcode |
-| **Xcode Command Line Tools** | Required for `build.sh` | Install via `xcode-select --install` |
-
 ## Privacy & Permissions
 
 On first launch, macOS will ask you to grant MyGo2Shell permission to control **Finder** and **Terminal** via AppleScript. This is required for the app to:
@@ -151,23 +171,6 @@ On first launch, macOS will ask you to grant MyGo2Shell permission to control **
 - Open a new Terminal window and run the `cd` command
 
 You can manage these permissions in **System Settings > Privacy & Security > Automation**.
-
-## Project Structure
-
-```
-MyGo2Shell/
-├── MyGo2Shell/
-│   ├── main.swift              # App entry point & core logic
-│   ├── Info.plist              # App metadata
-│   ├── MyGo2Shell.entitlements # AppleScript permissions
-│   └── Assets.xcassets/        # App icon assets
-├── assets/                     # Project assets (app icon source)
-├── MyGo2Shell.xcodeproj/       # Xcode project file
-├── build.sh                    # Command-line build script
-├── install.sh                  # One-line installation script
-├── README.md                   # English documentation
-└── README_CN.md                # Chinese documentation
-```
 
 ## FAQ
 
@@ -197,6 +200,23 @@ MyGo2Shell/
 
 **Q: The app opens Terminal but doesn't navigate to the right folder?**
 > Make sure you've granted automation permissions in **System Settings > Privacy & Security > Automation**. You may need to remove and re-add the permissions.
+
+## Project Structure
+
+```
+MyGo2Shell/
+├── MyGo2Shell/
+│   ├── main.swift              # App entry point & core logic
+│   ├── Info.plist              # App metadata
+│   ├── MyGo2Shell.entitlements # AppleScript permissions
+│   └── Assets.xcassets/        # App icon assets
+├── assets/                     # Project assets (app icon source)
+├── MyGo2Shell.xcodeproj/       # Xcode project file
+├── build.sh                    # Command-line build script
+├── install.sh                  # One-line installation script
+├── README.md                   # English documentation
+└── README_CN.md                # Chinese documentation
+```
 
 ## Acknowledgments
 

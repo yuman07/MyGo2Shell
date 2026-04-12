@@ -75,37 +75,75 @@ MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 
 4. 自动在新终端窗口中执行 `cd` 切换到目标目录
 5. 应用 **自动退出** — 不会驻留后台
 
+## 前置要求
+
+安装前请确认你的系统满足以下条件，否则 MyGo2Shell 将无法运行。
+
+| 项目 | 要求 |
+|------|------|
+| **操作系统** | macOS 14.0 (Sonoma) 或更高版本 |
+| **芯片架构** | Apple Silicon (arm64) — **不支持** Intel Mac |
+
+> 如果你只需安装预编译版本（下方方式一），满足以上条件即可。以下额外要求仅适用于从源码构建（方式二和方式三）：
+
+| 项目 | 要求 | 获取方式 |
+|------|------|----------|
+| **Xcode** | 16.0 或更高版本 | 从 [Mac App Store](https://apps.apple.com/app/xcode/id497799835) 下载 |
+| **Xcode Command Line Tools** | `build.sh` 构建时必需 | 在终端中运行 `xcode-select --install` |
+| **Git** | 任意版本 | 已包含在 Xcode Command Line Tools 中 |
+
 ## 安装方法
 
-### 方式一：一键安装（推荐）
+### macOS 14.0+ Apple Silicon（推荐）
 
-打开终端，粘贴以下命令：
+#### 方式一：一键安装（推荐）
+
+最简单的安装方式。打开终端，粘贴以下命令：
 
 ```bash
+# 一步完成下载、安装和配置
 curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh | bash
 ```
 
-自动下载最新版本，完成安装和配置，即装即用。
+自动下载最新版本，安装到 `/Applications/` 并移除 macOS 隔离标记，即装即用。
 
-### 方式二：从源码构建
+#### 方式二：命令行构建
 
 ```bash
-# 克隆仓库
+# 第 1 步：克隆仓库到本地
 git clone https://github.com/yuman07/MyGo2Shell.git
+
+# 第 2 步：进入项目目录
 cd MyGo2Shell
 
-# 构建应用
+# 第 3 步：运行构建脚本编译应用（需要 Xcode Command Line Tools）
 ./build.sh
 
-# 复制到应用程序目录
+# 第 4 步：将构建好的应用复制到"应用程序"文件夹
 cp -r build/MyGo2Shell.app /Applications/
+
+# 第 5 步：移除 macOS 隔离标记，避免 Gatekeeper 拦截
+xattr -cr /Applications/MyGo2Shell.app
 ```
 
-### 方式三：使用 Xcode 构建
+#### 方式三：使用 Xcode 构建
 
-1. 在 Xcode 中打开 `MyGo2Shell.xcodeproj`
-2. 选择 **Product > Build**（或按 `Cmd + B`）
-3. 将构建好的 `MyGo2Shell.app` 复制到 `/Applications/`
+```bash
+# 第 1 步：克隆仓库到本地
+git clone https://github.com/yuman07/MyGo2Shell.git
+
+# 第 2 步：进入项目目录
+cd MyGo2Shell
+
+# 第 3 步：打开 Xcode 项目
+open MyGo2Shell.xcodeproj
+```
+
+然后在 Xcode 中：
+
+1. 选择菜单栏 **Product > Build**（或按 `Cmd + B`）编译应用
+2. 选择 **Product > Show Build Folder in Finder** 找到构建好的 `MyGo2Shell.app`
+3. 将 `MyGo2Shell.app` 拖到 `/Applications/`
 
 ### 添加到 Finder 工具栏
 
@@ -125,24 +163,6 @@ cp -r build/MyGo2Shell.app /Applications/
 
 > **提示：** 如需移除，按住 `Cmd` 键将图标拖出工具栏即可。
 
-## 系统要求
-
-### 运行环境
-
-| 项目 | 要求 | 说明 |
-|------|------|------|
-| **macOS** | 14.0 (Sonoma) 或更高版本 | 应用的 Deployment Target 设定为 macOS 14.0 |
-| **芯片架构** | Apple Silicon (arm64) | 不支持 Intel Mac |
-| **权限** | 自动化（AppleScript）权限 | 首次启动时系统会弹窗提示授权 |
-
-### 编译环境
-
-| 项目 | 要求 | 说明 |
-|------|------|------|
-| **Xcode** | 26.3 或更高版本 | 需要 macOS 14.0 SDK 和 Swift 6.0 |
-| **Swift** | 6.0 或更高版本 | 已包含在 Xcode 中 |
-| **Xcode Command Line Tools** | `build.sh` 构建时必需 | 通过 `xcode-select --install` 安装 |
-
 ## 隐私与权限
 
 首次启动时，macOS 会请求你授予 MyGo2Shell 通过 AppleScript 控制 **Finder** 和 **Terminal** 的权限。这是应用正常工作所必需的：
@@ -151,23 +171,6 @@ cp -r build/MyGo2Shell.app /Applications/
 - 打开新的终端窗口并执行 `cd` 命令
 
 你可以在 **系统设置 > 隐私与安全性 > 自动化** 中管理这些权限。
-
-## 项目结构
-
-```
-MyGo2Shell/
-├── MyGo2Shell/
-│   ├── main.swift              # 应用入口和核心逻辑
-│   ├── Info.plist              # 应用元数据
-│   ├── MyGo2Shell.entitlements # AppleScript 权限配置
-│   └── Assets.xcassets/        # 应用图标资源
-├── assets/                     # 项目资源（应用图标源文件）
-├── MyGo2Shell.xcodeproj/       # Xcode 工程文件
-├── build.sh                    # 命令行构建脚本
-├── install.sh                  # 一键安装脚本
-├── README.md                   # 英文文档
-└── README_CN.md                # 中文文档
-```
 
 ## 常见问题
 
@@ -197,6 +200,23 @@ MyGo2Shell/
 
 **Q：应用打开了终端，但没有跳转到正确的目录？**
 > 请确认你已在 **系统设置 > 隐私与安全性 > 自动化** 中授予了相关权限。可能需要先移除再重新添加权限。
+
+## 项目结构
+
+```
+MyGo2Shell/
+├── MyGo2Shell/
+│   ├── main.swift              # 应用入口和核心逻辑
+│   ├── Info.plist              # 应用元数据
+│   ├── MyGo2Shell.entitlements # AppleScript 权限配置
+│   └── Assets.xcassets/        # 应用图标资源
+├── assets/                     # 项目资源（应用图标源文件）
+├── MyGo2Shell.xcodeproj/       # Xcode 工程文件
+├── build.sh                    # 命令行构建脚本
+├── install.sh                  # 一键安装脚本
+├── README.md                   # 英文文档
+└── README_CN.md                # 中文文档
+```
 
 ## 致谢
 
