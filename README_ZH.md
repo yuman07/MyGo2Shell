@@ -27,7 +27,7 @@
 
 ## MyGo2Shell 是什么？
 
-MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 目录下直接打开 **Terminal.app**。只需将它拖到 Finder 工具栏，点击即用，无需任何配置。
+MyGo2Shell 是一款轻量级 macOS 工具，能够在你当前浏览的 Finder 目录下直接打开终端。支持 **Terminal.app**、**iTerm2**、**Ghostty**、**Warp** 等多种终端。只需将它拖到 Finder 工具栏，点击即用，无需任何配置。
 
 ```
 Finder (/Users/you/Projects/MyApp)
