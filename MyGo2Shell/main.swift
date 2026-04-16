@@ -92,6 +92,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             activate
             set cfg to new surface configuration
             set initial working directory of cfg to "\(path)"
+            set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
             if (count of windows) > 0 then
                 new tab in front window with configuration cfg
             else
