@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (semver, e.g. 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract build metadata
+        id: meta
+        run: |
+          APP_NAME=$(grep '^APP_NAME=' build.sh | head -1 | cut -d'"' -f2)
+          DEPLOYMENT_TARGET=$(grep '^DEPLOYMENT_TARGET=' build.sh | head -1 | cut -d'"' -f2)
+          MIN_OS="macOS$(echo "$DEPLOYMENT_TARGET" | sed 's/\.0$//')"
+          echo "app_name=$APP_NAME" >> "$GITHUB_OUTPUT"
+          echo "min_os=$MIN_OS" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Package
+        id: package
+        run: |
+          APP_NAME="${{ steps.meta.outputs.app_name }}"
+          MIN_OS="${{ steps.meta.outputs.min_os }}"
+          VERSION="${{ inputs.version }}"
+          ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.zip"
+          cd build
+          zip -r "$ASSET_NAME" "${APP_NAME}.app"
+          echo "asset_name=$ASSET_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release and Upload Asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ inputs.version }}" \
+            "build/${{ steps.package.outputs.asset_name }}" \
+            --title "${{ inputs.version }}"
