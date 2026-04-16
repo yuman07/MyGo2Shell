@@ -35,7 +35,7 @@ jobs:
         run: |
           APP_NAME="${{ steps.meta.outputs.app_name }}"
           MIN_OS="${{ steps.meta.outputs.min_os }}"
-          VERSION="${{ inputs.version }}"
+          VERSION=$(echo "${{ inputs.version }}" | sed 's/^v//')
           ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.zip"
           cd build
           zip -r "$ASSET_NAME" "${APP_NAME}.app"
