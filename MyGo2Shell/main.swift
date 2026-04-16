@@ -69,36 +69,58 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func openInITerm(path: String) {
         let source = """
-        tell application "iTerm"
-            activate
-            if (count of windows) > 0 then
-                tell current window
-                    create tab with default profile
+        if application "iTerm" is running then
+            tell application "iTerm"
+                activate
+                if (count of windows) > 0 then
+                    tell current window
+                        create tab with default profile
+                    end tell
+                else
+                    create window with default profile
+                end if
+                tell current session of current window
+                    write text "cd " & quoted form of "\(path)" & " && clear"
                 end tell
-            else
-                create window with default profile
-            end if
-            tell current session of current window
-                write text "cd " & quoted form of "\(path)" & " && clear"
             end tell
-        end tell
+        else
+            tell application "iTerm"
+                activate
+                repeat while (count of windows) is 0
+                    delay 0.1
+                end repeat
+                tell current session of current window
+                    write text "cd " & quoted form of "\(path)" & " && clear"
+                end tell
+            end tell
+        end if
         """
         runAppleScript(source)
     }
 
     private func openInGhostty(path: String) {
         let source = """
-        tell application "Ghostty"
-            activate
-            set cfg to new surface configuration
-            set initial working directory of cfg to "\(path)"
-            set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
-            if (count of windows) > 0 then
-                new tab in front window with configuration cfg
-            else
+        if application "Ghostty" is running then
+            tell application "Ghostty"
+                activate
+                set cfg to new surface configuration
+                set initial working directory of cfg to "\(path)"
+                set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
+                if (count of windows) > 0 then
+                    new tab in front window with configuration cfg
+                else
+                    new window with configuration cfg
+                end if
+            end tell
+        else
+            tell application "Ghostty"
+                set cfg to new surface configuration
+                set initial working directory of cfg to "\(path)"
+                set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
                 new window with configuration cfg
-            end if
-        end tell
+                activate
+            end tell
+        end if
         """
         runAppleScript(source)
     }
@@ -112,10 +134,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func openInGenericTerminal(name: String, path: String) {
         let source = """
-        tell application "\(name)"
-            activate
-            do script "cd " & quoted form of "\(path)" & " && clear"
-        end tell
+        if application "\(name)" is running then
+            tell application "\(name)"
+                activate
+                do script "cd " & quoted form of "\(path)" & " && clear"
+            end tell
+        else
+            tell application "\(name)"
+                activate
+                repeat while (count of windows) is 0
+                    delay 0.1
+                end repeat
+                do script "cd " & quoted form of "\(path)" & " && clear" in front window
+            end tell
+        end if
         """
         runAppleScript(source)
     }
