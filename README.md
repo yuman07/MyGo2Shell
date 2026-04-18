@@ -52,7 +52,7 @@ Terminal
 - **One-click launch** — Click the toolbar icon to instantly open Terminal at the current Finder directory
 - **Multiple terminal support** — Works with Terminal.app, iTerm2, Ghostty, Warp, and more via a single `defaults write` command
 - **Zero configuration** — Works out of the box with Terminal.app, no setup required
-- **Minimal footprint** — Single-file Swift app (~170 lines), launches and exits immediately
+- **Minimal footprint** — Single-file Swift app (~180 lines), launches and exits immediately
 - **Native macOS experience** — Uses AppleScript to communicate with Finder and Terminal seamlessly
 - **Finder toolbar integration** — Lives right in your Finder toolbar for quick access
 
