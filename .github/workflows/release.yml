@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
     permissions:
       contents: write
     steps:
@@ -36,9 +36,12 @@ jobs:
           APP_NAME="${{ steps.meta.outputs.app_name }}"
           MIN_OS="${{ steps.meta.outputs.min_os }}"
           VERSION=$(echo "${{ inputs.version }}" | sed 's/^v//')
-          ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.zip"
-          cd build
-          zip -r "$ASSET_NAME" "${APP_NAME}.app"
+          ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.dmg"
+          hdiutil create \
+            -volname "$APP_NAME" \
+            -srcfolder "build/${APP_NAME}.app" \
+            -ov -format UDZO \
+            "build/$ASSET_NAME"
           echo "asset_name=$ASSET_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Create Release and Upload Asset
