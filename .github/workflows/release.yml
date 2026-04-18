@@ -4,23 +4,86 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (semver, e.g. 1.0.0)'
+        description: 'Release version (semver without v prefix, e.g. 1.0.0)'
         required: true
         type: string
+
+concurrency:
+  group: release-${{ inputs.version }}
+  cancel-in-progress: false
 
 env:
   APP_NAME: MyGo2Shell
   DEPLOYMENT_TARGET: "15.0"
   BUNDLE_IDENTIFIER: com.go2shell.MyGo2Shell
   BUILD_DIR: build
+  XCODE_VERSION: "26.3"
 
 jobs:
-  build:
-    runs-on: macos-26
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      tag: ${{ steps.compute.outputs.tag }}
+      is_prerelease: ${{ steps.compute.outputs.is_prerelease }}
+    steps:
+      - name: Validate semver input
+        run: |
+          if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Invalid semver '${{ inputs.version }}'. Expected 1.2.3 or 1.2.3-beta.1 (no v prefix)."
+            exit 1
+          fi
+
+      - name: Compute tag and prerelease flag
+        id: compute
+        run: |
+          TAG="v${{ inputs.version }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [[ "${{ inputs.version }}" =~ -(alpha|beta|rc) ]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  create_draft:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.validate.outputs.tag }}
+          IS_PRERELEASE: ${{ needs.validate.outputs.is_prerelease }}
+        run: |
+          ARGS=(--draft --target "$GITHUB_SHA" --title "${APP_NAME} ${TAG}")
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            ARGS+=(--prerelease)
+          fi
+          gh release create "$TAG" "${ARGS[@]}"
+
+  build:
+    needs: [validate, create_draft]
+    runs-on: macos-26
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Pin Xcode ${{ env.XCODE_VERSION }}
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
+          xcodebuild -version
+          swiftc --version
 
       - name: Build app bundle
         run: |
@@ -50,12 +113,11 @@ jobs:
 
           echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 
-      - name: Package
+      - name: Package dmg
         id: package
         run: |
           MIN_OS="macOS$(echo "$DEPLOYMENT_TARGET" | sed 's/\.0$//')"
-          VERSION=$(echo "${{ inputs.version }}" | sed 's/^v//')
-          ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.dmg"
+          ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${{ inputs.version }}.dmg"
           hdiutil create \
             -volname "$APP_NAME" \
             -srcfolder "${BUILD_DIR}/${APP_NAME}.app" \
@@ -63,10 +125,27 @@ jobs:
             "${BUILD_DIR}/$ASSET_NAME"
           echo "asset_name=$ASSET_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Create Release and Upload Asset
+      - name: Upload asset to draft release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.validate.outputs.tag }}
         run: |
-          gh release create "${{ inputs.version }}" \
-            "${BUILD_DIR}/${{ steps.package.outputs.asset_name }}" \
-            --title "${{ inputs.version }}"
+          gh release upload "$TAG" "${BUILD_DIR}/${{ steps.package.outputs.asset_name }}"
+
+  publish:
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.validate.outputs.tag }}
+        run: |
+          gh release edit "$TAG" --draft=false
