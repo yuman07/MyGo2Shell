@@ -97,10 +97,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if application "Ghostty" is running then
             tell application "Ghostty"
                 activate
-                set cfg to new surface configuration
-                set initial working directory of cfg to "\(path)"
-                set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
-                new window with configuration cfg
+                try
+                    set tgt to focused terminal of selected tab of front window
+                    set beforeIDs to id of every terminal
+                    perform action "new_window" on tgt
+                    delay 0.4
+                    set newTerm to missing value
+                    repeat with t in terminals
+                        if id of t is not in beforeIDs then
+                            set newTerm to t
+                            exit repeat
+                        end if
+                    end repeat
+                    if newTerm is not missing value then
+                        set cmd to "cd " & quoted form of "\(path)" & " && clear" & (ASCII character 13)
+                        perform action ("text:" & cmd) on newTerm
+                    else
+                        error "no new terminal detected"
+                    end if
+                on error
+                    set cfg to new surface configuration
+                    set initial working directory of cfg to "\(path)"
+                    set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
+                    new window with configuration cfg
+                end try
             end tell
         else
             tell application "Ghostty"
