@@ -144,7 +144,7 @@ If the app opens the terminal but doesn't navigate to the right folder, check **
 | Item | Minimum Version | Notes |
 |------|----------------|-------|
 | **macOS** | 15.6 (Sequoia) | Required by Xcode 26.3 |
-| **Xcode** | 26.3 | The project uses the new pbxproj format (`objectVersion = 100`, compatibility version `Xcode 26.3`), which older Xcode 26.0–26.2 cannot open. Includes Swift 6, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
+| **Xcode** | 26.3 | Includes Swift 6, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
 
 ### Local Development Build (Xcode)
 

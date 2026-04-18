@@ -144,7 +144,7 @@ defaults delete com.go2shell.MyGo2Shell terminal
 | 项目 | 最低版本 | 说明 |
 |------|---------|------|
 | **macOS** | 15.6 (Sequoia) | Xcode 26.3 的系统要求 |
-| **Xcode** | 26.3 | 工程使用新版 pbxproj 格式（`objectVersion = 100`，兼容版本 `Xcode 26.3`），Xcode 26.0–26.2 无法打开。包含 Swift 6、swiftc、actool 和 Git。从 [Mac App Store](https://apps.apple.com/app/xcode/id497799835) 下载 |
+| **Xcode** | 26.3 | 包含 Swift 6、swiftc、actool 和 Git。从 [Mac App Store](https://apps.apple.com/app/xcode/id497799835) 下载 |
 
 ### 本地开发构建（Xcode）
 
