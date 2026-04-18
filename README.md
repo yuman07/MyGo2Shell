@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-14.0%2B_(Sonoma)-blue?logo=apple" alt="macOS 14.0+">
+  <img src="https://img.shields.io/badge/macOS-15.0%2B_(Sequoia)-blue?logo=apple" alt="macOS 15.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -58,7 +58,7 @@ Terminal
 
 ## Install
 
-### macOS (14.0+, Apple Silicon)
+### macOS (15.0+, Apple Silicon)
 
 #### Option 1: One-Line Install (Recommended)
 
@@ -73,8 +73,8 @@ This downloads the latest release, installs it to `/Applications/`, and removes 
 #### Option 2: Download from GitHub
 
 1. Go to the [Releases](https://github.com/yuman07/MyGo2Shell/releases) page
-2. Download the latest `.zip` file
-3. Extract and move `MyGo2Shell.app` to `/Applications/`
+2. Download the latest `.dmg` file
+3. Double-click to mount it and drag `MyGo2Shell.app` to `/Applications/`
 
 > **Note:** MyGo2Shell is not signed with an Apple Developer certificate, so macOS Gatekeeper may block it on first launch. Use any of the following methods to allow the app:
 >
@@ -208,7 +208,7 @@ When launched, the app executes a three-phase workflow:
 | Configuration | `UserDefaults` (`defaults write`) |
 | Build System | Xcode / shell script (`swiftc` + `actool`) |
 | Architecture | arm64 (Apple Silicon) |
-| Deployment Target | macOS 14.0 (Sonoma) |
+| Deployment Target | macOS 15.0 (Sequoia) |
 
 ### Architecture
 

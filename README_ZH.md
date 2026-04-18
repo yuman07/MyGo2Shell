@@ -13,7 +13,7 @@
   <a href="https://github.com/yuman07/MyGo2Shell/releases"><img src="https://img.shields.io/github/downloads/yuman07/MyGo2Shell/total?color=blue&logo=github" alt="Downloads"></a>
   <a href="https://github.com/yuman07/MyGo2Shell/stargazers"><img src="https://img.shields.io/github/stars/yuman07/MyGo2Shell?style=social" alt="Stars"></a>
   <br>
-  <img src="https://img.shields.io/badge/macOS-14.0%2B_(Sonoma)-blue?logo=apple" alt="macOS 14.0+">
+  <img src="https://img.shields.io/badge/macOS-15.0%2B_(Sequoia)-blue?logo=apple" alt="macOS 15.0+">
   <img src="https://img.shields.io/badge/Swift-6.0-orange?logo=swift" alt="Swift 6.0">
   <img src="https://img.shields.io/badge/architecture-arm64-green" alt="Architecture">
   <img src="https://img.shields.io/github/license/yuman07/MyGo2Shell" alt="License">
@@ -58,7 +58,7 @@ Terminal
 
 ## 安装
 
-### macOS（14.0+，Apple Silicon）
+### macOS（15.0+，Apple Silicon）
 
 #### 方式一：一键安装（推荐）
 
@@ -73,8 +73,8 @@ curl -fsSL https://raw.githubusercontent.com/yuman07/MyGo2Shell/main/install.sh 
 #### 方式二：从 GitHub 下载
 
 1. 前往 [Releases](https://github.com/yuman07/MyGo2Shell/releases) 页面
-2. 下载最新的 `.zip` 文件
-3. 解压后将 `MyGo2Shell.app` 移动到 `/Applications/`
+2. 下载最新的 `.dmg` 文件
+3. 双击挂载后将 `MyGo2Shell.app` 拖入 `/Applications/`
 
 > **注意：** MyGo2Shell 未使用 Apple 开发者证书签名，macOS Gatekeeper 可能会在首次启动时拦截。可通过以下任一方式允许运行：
 >
@@ -208,7 +208,7 @@ MyGo2Shell 是一个无界面的 Cocoa 应用（`LSUIElement = true`），充当
 | 配置 | `UserDefaults`（`defaults write`） |
 | 构建系统 | Xcode / shell 脚本（`swiftc` + `actool`） |
 | 架构 | arm64 (Apple Silicon) |
-| 部署目标 | macOS 14.0 (Sonoma) |
+| 部署目标 | macOS 15.0 (Sequoia) |
 
 ### 架构
 
