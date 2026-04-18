@@ -52,7 +52,7 @@ Terminal
 - **One-click launch** — Click the toolbar icon to instantly open Terminal at the current Finder directory
 - **Multiple terminal support** — Works with Terminal.app, iTerm2, Ghostty, Warp, and more via a single `defaults write` command
 - **Zero configuration** — Works out of the box with Terminal.app, no setup required
-- **Minimal footprint** — Single-file Swift app (~130 lines), launches and exits immediately
+- **Minimal footprint** — Single-file Swift app (~170 lines), launches and exits immediately
 - **Native macOS experience** — Uses AppleScript to communicate with Finder and Terminal seamlessly
 - **Finder toolbar integration** — Lives right in your Finder toolbar for quick access
 
@@ -146,26 +146,9 @@ If the app opens the terminal but doesn't navigate to the right folder, check **
 | **macOS** | 15.6 (Sequoia) | Required by Xcode 26 |
 | **Xcode** | 26.0 | Includes Swift 6, swiftc, actool, and Git. Download from [Mac App Store](https://apps.apple.com/app/xcode/id497799835) |
 
-### Build with Command Line
+### Local Development Build (Xcode)
 
-```bash
-# Clone the repository
-git clone https://github.com/yuman07/MyGo2Shell.git
-
-# Navigate into the project directory
-cd MyGo2Shell
-
-# Run the build script (compiles arm64 binary, bundles app icon, generates .app)
-./build.sh
-
-# Copy the built app to the Applications folder
-cp -r build/MyGo2Shell.app /Applications/
-
-# Remove the macOS quarantine flag so the app can launch
-xattr -cr /Applications/MyGo2Shell.app
-```
-
-### Build with Xcode
+Local builds are for development only. **Official releases are produced exclusively by the [GitHub Actions release workflow](.github/workflows/release.yml)** — do not distribute locally built binaries.
 
 ```bash
 # Clone the repository
@@ -182,7 +165,11 @@ Then in Xcode:
 
 1. Select **Product > Build** (or press `Cmd + B`) to compile
 2. Select **Product > Show Build Folder in Finder** to locate `MyGo2Shell.app`
-3. Move `MyGo2Shell.app` to `/Applications/`
+3. Move `MyGo2Shell.app` to `/Applications/` for local testing
+
+### Cutting a Release
+
+Maintainers trigger the **Release** workflow (`Actions > Release > Run workflow`) with a semver tag; GitHub Actions builds the app bundle on the `macos-26` runner, packages it as a `.dmg`, and publishes it as a GitHub Release asset.
 
 ## Technical Overview
 
@@ -194,7 +181,7 @@ When launched, the app executes a three-phase workflow:
 
 1. **Path acquisition** — An `NSAppleScript` queries Finder for the frontmost window's target directory via Apple Events. If no Finder window is open (or the target cannot be resolved as an alias), the script falls back to `~/Desktop`. This two-tier approach handles edge cases like Finder windows showing search results, AirDrop, or network volumes that lack a POSIX path.
 
-2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` (set via `defaults write com.go2shell.MyGo2Shell terminal "name"`). The raw value is sanitized by stripping all characters except alphanumerics, spaces, and hyphens — this prevents AppleScript injection since the terminal name is interpolated into script strings. The sanitized name is then matched (case-insensitive) against built-in handlers: iTerm2 gets tab-aware AppleScript that reuses an existing window or creates a new one; Ghostty uses its `surface configuration` AppleScript API to set the working directory and create a tab or window; Warp gets `open -a` with a native directory argument; everything else gets the generic `do script` AppleScript interface. If the configured terminal is not found in `/Applications/`, `/System/Applications/`, or `~/Applications/`, the app falls back to Terminal.app.
+2. **Terminal routing** — The app reads the `terminal` key from `UserDefaults` (set via `defaults write com.go2shell.MyGo2Shell terminal "name"`). The raw value is sanitized by stripping all characters except alphanumerics, spaces, and hyphens — this prevents AppleScript injection since the terminal name is interpolated into script strings. The sanitized name is then matched (case-insensitive) against built-in handlers: iTerm2 gets tab-aware AppleScript that reuses an existing window or creates a new one; Ghostty uses its `surface configuration` AppleScript API to set the working directory and create a tab or window; Warp gets `open -a` with a native directory argument; everything else gets the generic `do script` AppleScript interface. If the configured terminal is not found in `/Applications/`, `/System/Applications/`, `/System/Applications/Utilities/`, or `~/Applications/`, the app falls back to Terminal.app.
 
 3. **Self-termination** — After dispatching the terminal command, `NSApp.terminate` is called asynchronously via `DispatchQueue.main.async`. The async dispatch ensures the AppleScript execution completes before the app tears down.
 
@@ -206,7 +193,7 @@ When launched, the app executes a three-phase workflow:
 | Framework | Cocoa (AppKit) |
 | IPC | AppleScript via `NSAppleScript` |
 | Configuration | `UserDefaults` (`defaults write`) |
-| Build System | Xcode / shell script (`swiftc` + `actool`) |
+| Build System | Xcode (local dev) / GitHub Actions (`swiftc` + `actool` + `hdiutil`, release) |
 | Architecture | arm64 (Apple Silicon) |
 | Deployment Target | macOS 15.0 (Sequoia) |
 
@@ -246,7 +233,7 @@ MyGo2Shell/
 |-- assets/
 |   `-- app-icon.png            # Source icon file (128x128)
 |-- MyGo2Shell.xcodeproj/       # Xcode project configuration
-|-- build.sh                    # CLI build: swiftc + actool -> .app bundle
+|-- .github/workflows/          # GitHub Actions release workflow (swiftc + actool + hdiutil)
 |-- install.sh                  # One-line installer (downloads latest release)
 |-- README.md                   # English documentation
 |-- README_ZH.md                # Chinese documentation

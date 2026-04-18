@@ -52,7 +52,7 @@ Terminal
 - **一键启动** — 点击工具栏图标，即刻在当前 Finder 目录下打开终端
 - **多终端支持** — 通过一条 `defaults write` 命令即可切换到 iTerm2、Ghostty、Warp 等终端
 - **零配置** — 开箱即用，默认打开 Terminal.app，无需任何设置
-- **极致轻量** — 单文件 Swift 应用（约 130 行代码），启动即退出
+- **极致轻量** — 单文件 Swift 应用（约 170 行代码），启动即退出
 - **原生体验** — 使用 AppleScript 与 Finder 和 Terminal 无缝通信
 - **工具栏集成** — 常驻 Finder 工具栏，随时可用
 
@@ -146,26 +146,9 @@ defaults delete com.go2shell.MyGo2Shell terminal
 | **macOS** | 15.6 (Sequoia) | Xcode 26 的系统要求 |
 | **Xcode** | 26.0 | 包含 Swift 6、swiftc、actool 和 Git。从 [Mac App Store](https://apps.apple.com/app/xcode/id497799835) 下载 |
 
-### 命令行构建
+### 本地开发构建（Xcode）
 
-```bash
-# 克隆仓库到本地
-git clone https://github.com/yuman07/MyGo2Shell.git
-
-# 进入项目目录
-cd MyGo2Shell
-
-# 运行构建脚本（编译 arm64 二进制文件，打包应用图标，生成 .app）
-./build.sh
-
-# 将构建好的应用复制到「应用程序」文件夹
-cp -r build/MyGo2Shell.app /Applications/
-
-# 移除 macOS 隔离标记，避免 Gatekeeper 拦截
-xattr -cr /Applications/MyGo2Shell.app
-```
-
-### 使用 Xcode 构建
+本地构建仅用于日常开发调试。**正式 Release 只能通过 [GitHub Actions Release 工作流](.github/workflows/release.yml) 发布**，不要分发本地构建的二进制产物。
 
 ```bash
 # 克隆仓库到本地
@@ -182,7 +165,11 @@ open MyGo2Shell.xcodeproj
 
 1. 选择菜单栏 **Product > Build**（或按 `Cmd + B`）编译
 2. 选择 **Product > Show Build Folder in Finder** 找到 `MyGo2Shell.app`
-3. 将 `MyGo2Shell.app` 移动到 `/Applications/`
+3. 将 `MyGo2Shell.app` 移动到 `/Applications/` 进行本地验证
+
+### 发布 Release
+
+维护者通过 **Actions > Release > Run workflow** 手动触发工作流并填入 semver 版本号；GitHub Actions 在 `macos-26` runner 上构建 app 包，用 `hdiutil` 打成 `.dmg`，并作为 GitHub Release 资源发布。
 
 ## 技术概述
 
@@ -194,7 +181,7 @@ MyGo2Shell 是一个无界面的 Cocoa 应用（`LSUIElement = true`），充当
 
 1. **路径获取** — 通过 `NSAppleScript` 向 Finder 发送 Apple Events 查询，获取最前面窗口的目标目录的 POSIX 路径。如果没有打开任何 Finder 窗口（或目标无法解析为 alias），脚本回退到 `~/Desktop`。这种两级策略能够处理 Finder 窗口显示搜索结果、AirDrop 或缺少 POSIX 路径的网络卷宗等边界情况。
 
-2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm2 使用感知标签页的 AppleScript（复用现有窗口或创建新窗口）；Ghostty 使用其 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口；Warp 使用 `open -a`（原生目录参数）；其余终端使用通用的 `do script` AppleScript 接口。如果配置的终端在 `/Applications/`、`/System/Applications/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
+2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm2 使用感知标签页的 AppleScript（复用现有窗口或创建新窗口）；Ghostty 使用其 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口；Warp 使用 `open -a`（原生目录参数）；其余终端使用通用的 `do script` AppleScript 接口。如果配置的终端在 `/Applications/`、`/System/Applications/`、`/System/Applications/Utilities/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
 
 3. **自动退出** — 分派终端命令后，通过 `DispatchQueue.main.async` 异步调用 `NSApp.terminate`。异步分派确保 AppleScript 执行完成后应用才会拆除。
 
@@ -206,7 +193,7 @@ MyGo2Shell 是一个无界面的 Cocoa 应用（`LSUIElement = true`），充当
 | 框架 | Cocoa (AppKit) |
 | 进程间通信 | AppleScript（通过 `NSAppleScript`） |
 | 配置 | `UserDefaults`（`defaults write`） |
-| 构建系统 | Xcode / shell 脚本（`swiftc` + `actool`） |
+| 构建系统 | Xcode（本地开发）/ GitHub Actions（`swiftc` + `actool` + `hdiutil`，发布） |
 | 架构 | arm64 (Apple Silicon) |
 | 部署目标 | macOS 15.0 (Sequoia) |
 
@@ -246,7 +233,7 @@ MyGo2Shell/
 |-- assets/
 |   `-- app-icon.png            # 图标源文件（128x128）
 |-- MyGo2Shell.xcodeproj/       # Xcode 项目配置
-|-- build.sh                    # 命令行构建：swiftc + actool -> .app 包
+|-- .github/workflows/          # GitHub Actions 发布工作流（swiftc + actool + hdiutil）
 |-- install.sh                  # 一键安装脚本（下载最新 Release）
 |-- README.md                   # 英文文档
 |-- README_ZH.md                # 中文文档

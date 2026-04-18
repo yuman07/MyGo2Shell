@@ -8,6 +8,12 @@ on:
         required: true
         type: string
 
+env:
+  APP_NAME: MyGo2Shell
+  DEPLOYMENT_TARGET: "15.0"
+  BUNDLE_IDENTIFIER: com.go2shell.MyGo2Shell
+  BUILD_DIR: build
+
 jobs:
   build:
     runs-on: macos-26
@@ -16,32 +22,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract build metadata
-        id: meta
+      - name: Build app bundle
         run: |
-          APP_NAME=$(grep '^APP_NAME=' build.sh | head -1 | cut -d'"' -f2)
-          DEPLOYMENT_TARGET=$(grep '^DEPLOYMENT_TARGET=' build.sh | head -1 | cut -d'"' -f2)
-          MIN_OS="macOS$(echo "$DEPLOYMENT_TARGET" | sed 's/\.0$//')"
-          echo "app_name=$APP_NAME" >> "$GITHUB_OUTPUT"
-          echo "min_os=$MIN_OS" >> "$GITHUB_OUTPUT"
+          APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
+          mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 
-      - name: Build
-        run: |
-          chmod +x build.sh
-          ./build.sh
+          swiftc ${APP_NAME}/main.swift \
+              -o "$APP_BUNDLE/Contents/MacOS/$APP_NAME" \
+              -framework Cocoa \
+              -target arm64-apple-macos${DEPLOYMENT_TARGET}
+
+          actool ${APP_NAME}/Assets.xcassets \
+              --compile "$APP_BUNDLE/Contents/Resources" \
+              --platform macosx \
+              --minimum-deployment-target ${DEPLOYMENT_TARGET} \
+              --app-icon AppIcon \
+              --output-partial-info-plist "${BUILD_DIR}/partial-info.plist" \
+              > /dev/null
+
+          sed \
+              -e 's/$(DEVELOPMENT_LANGUAGE)/en/' \
+              -e "s/\$(EXECUTABLE_NAME)/${APP_NAME}/" \
+              -e "s/\$(PRODUCT_BUNDLE_IDENTIFIER)/${BUNDLE_IDENTIFIER}/" \
+              -e "s/\$(PRODUCT_NAME)/${APP_NAME}/" \
+              -e "s/\$(MACOSX_DEPLOYMENT_TARGET)/${DEPLOYMENT_TARGET}/" \
+              ${APP_NAME}/Info.plist > "$APP_BUNDLE/Contents/Info.plist"
+
+          echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 
       - name: Package
         id: package
         run: |
-          APP_NAME="${{ steps.meta.outputs.app_name }}"
-          MIN_OS="${{ steps.meta.outputs.min_os }}"
+          MIN_OS="macOS$(echo "$DEPLOYMENT_TARGET" | sed 's/\.0$//')"
           VERSION=$(echo "${{ inputs.version }}" | sed 's/^v//')
           ASSET_NAME="${APP_NAME}_${MIN_OS}_arm64_${VERSION}.dmg"
           hdiutil create \
             -volname "$APP_NAME" \
-            -srcfolder "build/${APP_NAME}.app" \
+            -srcfolder "${BUILD_DIR}/${APP_NAME}.app" \
             -ov -format UDZO \
-            "build/$ASSET_NAME"
+            "${BUILD_DIR}/$ASSET_NAME"
           echo "asset_name=$ASSET_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Create Release and Upload Asset
@@ -49,5 +68,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ inputs.version }}" \
-            "build/${{ steps.package.outputs.asset_name }}" \
+            "${BUILD_DIR}/${{ steps.package.outputs.asset_name }}" \
             --title "${{ inputs.version }}"
