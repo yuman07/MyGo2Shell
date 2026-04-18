@@ -181,9 +181,9 @@ MyGo2Shell 是一个无界面的 Cocoa 应用（`LSUIElement = true`），充当
 
 1. **路径获取** — 通过 `NSAppleScript` 向 Finder 发送 Apple Events 查询，获取最前面窗口的目标目录的 POSIX 路径。如果没有打开任何 Finder 窗口（或目标无法解析为 alias），脚本回退到 `~/Desktop`。这种两级策略能够处理 Finder 窗口显示搜索结果、AirDrop 或缺少 POSIX 路径的网络卷宗等边界情况。
 
-2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm2 使用感知标签页的 AppleScript（复用现有窗口或创建新窗口）；Ghostty 使用其 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口；Warp 使用 `open -a`（原生目录参数）；其余终端使用通用的 `do script` AppleScript 接口。如果配置的终端在 `/Applications/`、`/System/Applications/`、`/System/Applications/Utilities/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
+2. **终端路由** — 应用从 `UserDefaults` 读取 `terminal` 键值（通过 `defaults write com.go2shell.MyGo2Shell terminal "name"` 设置）。原始值经过清洗，剥离字母数字、空格和连字符以外的所有字符——这是为了防止 AppleScript 注入，因为终端名称会被插值到脚本字符串中。清洗结果若为空则回退到 `Terminal`。清洗后的名称通过大小写无关匹配分派到内置处理器：iTerm / iTerm2 使用感知标签页的 AppleScript（前窗口已存在则 `create tab`，否则 `create window`）；Ghostty 使用其 `surface configuration` AppleScript API（`initial working directory` + `initial input`）在前窗口创建新标签页或新窗口；Warp 通过 AppleScript `do shell script "open -a Warp <path>"` 调用原生目录参数；其余终端落到通用 `do script` AppleScript 处理器。每个处理器都区分「应用已在运行」的快速路径与「冷启动后轮询 `count of windows > 0`」的慢速路径，所有 `cd` 都会追加 `&& clear` 以呈现干净的提示符。如果配置的终端在 `/Applications/`、`/System/Applications/`、`/System/Applications/Utilities/` 或 `~/Applications/` 中均未找到，则自动回退到 Terminal.app。
 
-3. **自动退出** — 分派终端命令后，通过 `DispatchQueue.main.async` 异步调用 `NSApp.terminate`。异步分派确保 AppleScript 执行完成后应用才会拆除。
+3. **自动退出** — `openShellInFinderDirectory` 全程同步（每个 `NSAppleScript.executeAndReturnError` 都会阻塞等待脚本返回）。它返回后通过 `DispatchQueue.main.async` 把 `NSApp.terminate` 调度到下一次主循环迭代，让 `applicationDidFinishLaunching` 先干净退出，再拆除应用。
 
 ### 技术栈
 
@@ -211,15 +211,15 @@ graph TD
         Router -->|"default / other"| GH[Generic Handler]
     end
 
-    IH -->|"AppleScript: create tab + write cd"| iTerm[iTerm2.app]
-    GtH -->|"AppleScript: surface config + new tab/window"| Ghostty[Ghostty.app]
-    WH -->|"open -a with directory path"| Warp[Warp.app]
+    IH -->|"AppleScript: new tab / window + write text cd"| iTerm[iTerm2.app]
+    GtH -->|"AppleScript: surface config + new tab / window"| Ghostty[Ghostty.app]
+    WH -->|"AppleScript: do shell script open -a"| Warp[Warp.app]
     GH -->|"AppleScript: do script cd"| Term["Terminal.app / Other"]
 ```
 
 - **路径获取流** — Finder.app 接收来自 Terminal Router 的 Apple Events 查询，返回最前面窗口目标的 POSIX 路径。如果查询失败，路由器回退到 `~/Desktop`
-- **终端路由逻辑** — 路由器从 UserDefaults 读取用户的终端偏好，清洗输入（剥离不安全字符），然后根据大小写无关的名称匹配分派到三个专用处理器之一
-- **处理器特化** — 每个处理器针对目标终端优化：iTerm Handler 使用感知标签页的 AppleScript（复用现有窗口），Ghostty Handler 使用 `surface configuration` AppleScript API 原生设置工作目录并创建标签页或窗口，Warp Handler 使用原生 `open -a`（Warp 直接接受目录参数），Generic Handler 使用通用的 `do script` AppleScript 接口，兼容所有支持脚本的终端
+- **终端路由逻辑** — 路由器从 UserDefaults 读取用户的终端偏好，清洗输入（剥离不安全字符，若为空则默认 `Terminal`），然后根据大小写无关的名称匹配分派到四个专用处理器之一；未识别但已安装的终端落到通用处理器，未安装的名称则回退到 Terminal.app
+- **处理器特化** — 每个处理器针对目标终端优化：iTerm Handler 使用感知标签页的 AppleScript（前窗口已存在则创建新标签页，否则创建新窗口），Ghostty Handler 使用 `surface configuration` AppleScript API + `initial working directory` + `initial input` 创建标签页或窗口，Warp Handler 通过 AppleScript `do shell script "open -a Warp <path>"` 调用（Warp 直接接受目录参数），Generic Handler 使用通用的 `do script` AppleScript 接口兼容所有支持脚本的终端。每个处理器都区分「应用已运行」的快速路径与「冷启动后等待首个窗口出现」的慢速路径。
 
 ### 项目结构
 
