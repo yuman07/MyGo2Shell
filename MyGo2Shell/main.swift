@@ -72,13 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if application "iTerm" is running then
             tell application "iTerm"
                 activate
-                if (count of windows) > 0 then
-                    tell current window
-                        create tab with default profile
-                    end tell
-                else
-                    create window with default profile
-                end if
+                create window with default profile
                 tell current session of current window
                     write text "cd " & quoted form of "\(path)" & " && clear"
                 end tell
@@ -106,11 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 set cfg to new surface configuration
                 set initial working directory of cfg to "\(path)"
                 set initial input of cfg to "cd " & quoted form of "\(path)" & " && clear" & return
-                if (count of windows) > 0 then
-                    new tab in front window with configuration cfg
-                else
-                    new window with configuration cfg
-                end if
+                new window with configuration cfg
             end tell
         else
             tell application "Ghostty"
